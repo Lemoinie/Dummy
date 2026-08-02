@@ -4,11 +4,11 @@ A modular, standalone mod for **Kingdom Come: Deliverance II** that spawns a cus
 
 ---
 
-## 🌟 Key Features
+## 🌟 Features Summary
 
 ### 👤 NPC Identity & HUD Nametag
 - Spawns a custom male NPC named **Dumb Dumb**.
-- Custom name is set via engine properties and deferred timers so the HUD nametag displays properly in-game.
+- Linked via custom Skald database table (`skald_character__dummy.xml`) and UI localization (`char_dumb_dumb_uiName`) so the HUD target bar cleanly displays **Dumb Dumb**.
 
 ### 🛡️ Zero Reputation Loss & Crime-Ignored
 - **Custom Soul & Faction:** Powered by a standalone soul (`soul_dumb_dumb`) with non-civilian social class (`social_class_id="0"`) assigned to **`dummyFaction`**.
@@ -22,14 +22,14 @@ A modular, standalone mod for **Kingdom Come: Deliverance II** that spawns a cus
 ### 🎮 In-Game Interaction Prompts (E & V Keys)
 Looking at Dumb Dumb displays custom interactive prompts:
 - **Press `E` (`use`): "Change Armor Preset"** — Cycles Dumb Dumb's armor preset in real time.
-- **Press `V` (`companion_bond`): "Make Hostile" / "Wait Here"** — Toggles Dumb Dumb between two operational modes:
+- **Hold `V` (`companion_bond`): "Make Hostile" / "Wait Here"** — Toggles Dumb Dumb between two operational modes:
   - **Wait Mode (Neutral - Default):** Dumb Dumb stands completely still, sheathes weapon, and acts as a stationary target.
-  - **Hostile Mode (Combat Practice):** Dumb Dumb draws weapon and engages Henry in melee combat for sparring practice (while still never fleeing).
+  - **Hostile Mode (Combat Practice):** Dumb Dumb draws weapon and engages Henry in melee combat for sparring practice. Holding `V` again instantly disengages combat (via watchdog loop in `combat_melee.xml`), sheathes weapon, clears target, and returns Dumb Dumb back to Wait mode.
 
 ### ⚔️ Curated Armor Presets
 Cycles cleanly through 3 distinct armor tiers:
 1. **Light Armor:** Light gambeson, coif, and basic protection.
-2. **Medium Armor:** Brigandine chest, mail coif, kettle hat, and padded leg protection.
+2. **Medium Armor:** Brigandine chest, mail coif, kettle hat, and padded leg chausses.
 3. **Heavy Full Plate Armor:** Full steel plate cuirass/breastplate, full plate arm & leg harness, padded chausses, hourglass plate gauntlets, mail hauberk & collar, and visored bascinet helmet.
 
 ---
@@ -58,19 +58,22 @@ Dummy/
 ├── build_pak.ps1                        <-- PowerShell PAK compiler
 ├── README.md                            <-- Mod documentation
 ├── Data/
-│   └── dummy.pak                        <-- Compiled engine data pak
+│   ├── dummy.pak                        <-- Compiled engine data pak
+│   └── English_xml.pak                  <-- Compiled localization pak
 └── pak_source/
     ├── AI/
-    │   └── dummy_scheduler.xml          <-- No-flee behavior tree (Wait & Hostile states)
+    │   ├── dummy_scheduler.xml          <-- No-flee behavior tree (Wait & Hostile states)
+    │   └── combat_melee.xml             <-- Sparring combat behavior tree with fast disengage
     ├── Libs/
     │   ├── Config/
     │   │   └── defaultProfile.xml       <-- Keybind profile mappings
     │   └── tables/
-    │       ├── ai/                      <-- Brain, subbrain, & switching XML tables
+    │       ├── ai/                      <-- Brain, subbrain, switching, & smartEntity XML tables
     │       ├── item/                    <-- Custom heavy full plate clothing preset XML
-    │       └── rpg/                     <-- Custom soul & dummyFaction XML tables
+    │       ├── rpg/                     <-- Custom soul & dummyFaction XML tables
+    │       └── skald/                   <-- Custom skald character HUD name XML tables
     ├── localization/
-    │   └── English_xml.xml              <-- English UI localization keys for interaction prompts
+    │   └── English_xml.xml              <-- UI localization keys for prompts & HUD names
     └── Scripts/
         └── mods/
             ├── dummy.lua                <-- Master entry point & CCommand registry
@@ -85,7 +88,7 @@ Dummy/
 
 1. Double-click `build_pak.bat` (or run `build_pak.ps1` in PowerShell).
 2. The build script automatically:
-   - Packs Lua scripts, AI behavior trees, RPG/Item/AI XML tables into `Data/dummy.pak`.
+   - Packs Lua scripts, AI behavior trees, RPG/Item/AI/Skald XML tables into `Data/dummy.pak`.
    - Packs localization keys into `Data/English_xml.pak`.
    - Deploys all `.pak` files and `mod.manifest` to `C:\Games\Kingdom Come - Deliverance II\mods\Dummy`.
 
