@@ -9,26 +9,20 @@ DummyEquipment.ArmorPresets = {
     {
         name = "Light Armor",
         guid = "0083b6bd-6ebd-47f3-b324-48d64c7ee625",
+        locKey = "ui_dummy_change_preset_light",
     },
     -- 2 ▸ Medium Armor
     {
         name = "Medium Armor",
         guid = "01234e1e-d58d-4c6b-9f5e-5eafba96e3a5",
+        locKey = "ui_dummy_change_preset_medium",
     },
-    -- 3 ▸ Heavy Armor
+    -- 3 ▸ Heavy Full Plate Armor
     {
-        name = "Heavy Armor",
-        guid = "15dff4c0-790a-47b9-b513-6392eb2b2c10",
-    },
-    -- 4 ▸ Bandit Outfit
-    {
-        name = "Bandit Outfit",
-        guid = "20aba0c4-1cfb-42de-97dd-939530d6240d",
-    },
-    -- 5 ▸ Cuman Armor
-    {
-        name = "Cuman Armor",
-        guid = "08d7d086-327a-4f95-92d3-6a6c60a494f0",
+        name = "Heavy Full Plate Armor",
+        guid = "a1b2c3d4-0004-4000-8000-100000000004", -- Custom Full Plate Preset
+        fallbackGuid = "b7d72548-8a0a-4631-b1c1-21c692ec99c4", -- Knight Full Plate
+        locKey = "ui_dummy_change_preset_heavy",
     },
 }
 
@@ -42,15 +36,29 @@ function DummyEquipment:ApplyPreset(entityId, index)
     end
 
     local entity = System.GetEntity(entityId)
-    if not entity then
+    if not entity or not entity.actor then
         return
     end
 
-    if System and System.LogAlways then
-        System.LogAlways("[Dummy] Equipping clothing preset: " .. preset.name .. " (" .. preset.guid .. ")")
+    -- Undress first so layer armor replaces cleanly
+    pcall(function()
+        if entity.actor.Undress then
+            entity.actor:Undress()
+        end
+    end)
+
+    -- Equip the preset
+    local ok = pcall(function()
+        entity.actor:EquipClothingPreset(preset.guid)
+    end)
+
+    if not ok and preset.fallbackGuid then
+        pcall(function()
+            entity.actor:EquipClothingPreset(preset.fallbackGuid)
+        end)
     end
 
-    if entity.actor and entity.actor.EquipClothingPreset then
-        entity.actor:EquipClothingPreset(preset.guid)
+    if System and System.LogAlways then
+        System.LogAlways("[Dummy] Applied armor preset " .. tostring(index) .. ": " .. preset.name)
     end
 end

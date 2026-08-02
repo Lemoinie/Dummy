@@ -19,7 +19,7 @@ function Add-FileToZip($zip, $entryPath, $filePath) {
     $writer.Close()
 }
 
-# ── 1. DATA PAK (Scripts + Libs + AI + RPG Tables) ────────
+# ── 1. DATA PAK (Scripts + Libs + AI + RPG Tables + Item Tables) ─
 Write-Host "[1/2] Building data pak ..."
 $dataPak = Join-Path $outDir "dummy.pak"
 if (Test-Path $dataPak) { Remove-Item $dataPak -Force }
@@ -61,6 +61,14 @@ $rpgTableDir = Join-Path $pakSource "libs\tables\rpg"
 if (Test-Path $rpgTableDir) {
     foreach ($f in Get-ChildItem $rpgTableDir -Filter "*.xml") {
         Add-FileToZip $zip "libs/tables/rpg/$($f.Name)" $f.FullName
+    }
+}
+
+# --- Item table XMLs (clothing_preset) ---
+$itemTableDir = Join-Path $pakSource "libs\tables\item"
+if (Test-Path $itemTableDir) {
+    foreach ($f in Get-ChildItem $itemTableDir -Filter "*.xml") {
+        Add-FileToZip $zip "libs/tables/item/$($f.Name)" $f.FullName
     }
 }
 
