@@ -17,15 +17,10 @@ function Add-FileToZip {
         [Parameter(Mandatory=$true)] [string] $EntryPath,
         [Parameter(Mandatory=$true)] [string] $FilePath
     )
-    $content = Get-Content -Path $FilePath -Raw
-    $entry   = $ZipArchive.CreateEntry($EntryPath)
-    $writer  = New-Object System.IO.StreamWriter($entry.Open())
-    $writer.Write($content)
-    $writer.Flush()
-    $writer.Close()
+    $null = [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($ZipArchive, $FilePath, $EntryPath)
 }
 
-# ── 1. DATA PAK (Scripts + Libs + AI + RPG Tables + Item Tables + Skald Tables) ─
+# ── 1. DATA PAK ──────────────────────────────────────────
 Write-Host "[1/2] Building data pak ..."
 $dataPak = Join-Path $outDir "dummy.pak"
 if (Test-Path $dataPak) { Remove-Item -Path $dataPak -Force }
