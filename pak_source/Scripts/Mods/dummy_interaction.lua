@@ -7,26 +7,26 @@ DummyInteraction = DummyInteraction or {}
 function DummyInteraction:Inject(entity)
     if not entity then return end
 
+    entity.DummyCyclePreset = function(self, user)
+        DummySpawner:NextPreset()
+    end
+
     entity.GetActions = function(selfEnt, userEnt, firstFast)
         local output = {}
 
+        -- Do NOT include BasicAIActions: strips all dialogue/pickpocket/vanilla options
         if selfEnt.actor and not selfEnt.actor:IsDead() then
-            local activeIdx = DummySpawner.currentPresetIdx or 1
-            local activePreset = DummyEquipment.ArmorPresets[activeIdx]
-            local label = "Change Armor Preset (Current: " .. (activePreset and activePreset.name or "") .. ")"
 
             if AddInteractorAction then
                 AddInteractorAction(
                     output,
                     firstFast,
                     Action()
-                        :hint(label)
+                        :hint("ui_dummy_change_preset")  -- localization key, not raw string
                         :hintType(AHT_RELEASE)
                         :action("use")
                         :uiOrder(1)
-                        :func(function()
-                            DummySpawner:NextPreset()
-                        end)
+                        :func(selfEnt.DummyCyclePreset)
                         :interaction(inr_loot)
                 )
             end
