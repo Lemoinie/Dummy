@@ -9,34 +9,53 @@ $gameModDir = "C:\Games\Kingdom Come - Deliverance II\mods\Dummy"
 
 if (-not (Test-Path $outDir)) { New-Item -ItemType Directory -Path $outDir | Out-Null }
 
-# ── 1. DATA PAK (Scripts + Libs) ────────────────────────
+# Helper: add a file to a zip archive at a given entry path
+function Add-FileToZip($zip, $entryPath, $filePath) {
+    $content = Get-Content $filePath -Raw
+    $entry   = $zip.CreateEntry($entryPath)
+    $writer  = New-Object System.IO.StreamWriter($entry.Open())
+    $writer.Write($content)
+    $writer.Flush()
+    $writer.Close()
+}
+
+# ── 1. DATA PAK (Scripts + Libs + AI) ────────────────────
 Write-Host "[1/2] Building data pak ..."
 $dataPak = Join-Path $outDir "dummy.pak"
 if (Test-Path $dataPak) { Remove-Item $dataPak -Force }
-
 $zip = [System.IO.Compression.ZipFile]::Open($dataPak, [System.IO.Compression.ZipArchiveMode]::Create)
 
-# defaultProfile.xml
+# --- defaultProfile.xml ---
 $xmlPath = Join-Path $pakSource "Libs\Config\defaultProfile.xml"
 if (Test-Path $xmlPath) {
-    $xmlContent = Get-Content $xmlPath -Raw
-    $e = $zip.CreateEntry("Libs/Config/defaultProfile.xml")
-    $w = New-Object System.IO.StreamWriter($e.Open())
-    $w.Write($xmlContent); $w.Flush(); $w.Close()
+    Add-FileToZip $zip "Libs/Config/defaultProfile.xml" $xmlPath
 }
 
-# All Lua scripts under Scripts/mods, registered under multiple prefixes
+# --- Lua scripts: registered under all known prefixes the engine searches ---
+$luaPrefixes = @("Scripts/Systems","Scripts/Utils","Scripts/mods","scripts/mods","Scripts/Startup")
 $luaFiles = Get-ChildItem -Path (Join-Path $pakSource "Scripts\mods") -Filter "*.lua"
-$prefixes = @("Scripts/Systems", "Scripts/Utils", "Scripts/mods", "scripts/mods", "Scripts/Startup")
 foreach ($f in $luaFiles) {
-    $luaContent = Get-Content $f.FullName -Raw
-    foreach ($prefix in $prefixes) {
-        $entryPath = "$prefix/$($f.Name)"
-        $e = $zip.CreateEntry($entryPath)
-        $w = New-Object System.IO.StreamWriter($e.Open())
-        $w.Write($luaContent); $w.Flush(); $w.Close()
+    foreach ($prefix in $luaPrefixes) {
+        Add-FileToZip $zip "$prefix/$($f.Name)" $f.FullName
     }
 }
+
+# --- AI behavior tree XMLs ---
+$aiSrcDir = Join-Path $pakSource "AI"
+if (Test-Path $aiSrcDir) {
+    foreach ($f in Get-ChildItem $aiSrcDir -Filter "*.xml") {
+        Add-FileToZip $zip "AI/$($f.Name)" $f.FullName
+    }
+}
+
+# --- AI table XMLs (brain / subbrain / switching) ---
+$aiTableDir = Join-Path $pakSource "libs\tables\ai"
+if (Test-Path $aiTableDir) {
+    foreach ($f in Get-ChildItem $aiTableDir -Filter "*.xml") {
+        Add-FileToZip $zip "libs/tables/ai/$($f.Name)" $f.FullName
+    }
+}
+
 $zip.Dispose()
 Write-Host "  -> $dataPak"
 
@@ -44,14 +63,10 @@ Write-Host "  -> $dataPak"
 Write-Host "[2/2] Building localization pak ..."
 $locPak = Join-Path $outDir "English_xml.pak"
 if (Test-Path $locPak) { Remove-Item $locPak -Force }
-
 $locXmlPath = Join-Path $pakSource "localization\English_xml.xml"
 if (Test-Path $locXmlPath) {
     $zip = [System.IO.Compression.ZipFile]::Open($locPak, [System.IO.Compression.ZipArchiveMode]::Create)
-    $xmlContent = Get-Content $locXmlPath -Raw
-    $e = $zip.CreateEntry("English_xml.xml")
-    $w = New-Object System.IO.StreamWriter($e.Open())
-    $w.Write($xmlContent); $w.Flush(); $w.Close()
+    Add-FileToZip $zip "English_xml.xml" $locXmlPath
     $zip.Dispose()
     Write-Host "  -> $locPak"
 } else {
@@ -65,8 +80,8 @@ $gameLoc  = Join-Path $gameModDir "localization"
 if (-not (Test-Path $gameData)) { New-Item -ItemType Directory -Path $gameData | Out-Null }
 if (-not (Test-Path $gameLoc))  { New-Item -ItemType Directory -Path $gameLoc  | Out-Null }
 
-Copy-Item $dataPak                          -Destination (Join-Path $gameData "dummy.pak")       -Force
-Copy-Item $locPak                           -Destination (Join-Path $gameLoc  "English_xml.pak") -Force
+Copy-Item $dataPak                              -Destination (Join-Path $gameData "dummy.pak")       -Force
+Copy-Item $locPak                               -Destination (Join-Path $gameLoc  "English_xml.pak") -Force
 Copy-Item (Join-Path $scriptDir "mod.manifest") -Destination (Join-Path $gameModDir "mod.manifest")  -Force
 
 Write-Host ""

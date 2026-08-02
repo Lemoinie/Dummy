@@ -156,7 +156,9 @@ function DummySpawner:Spawn()
     local spawnPos, facingDir = self:GetPosInFront(pl, self.SPAWN_DISTANCE)
     local entityName = "DummyTarget_DumbDumb_" .. tostring(math.random(10000, 99999))
 
-    -- Spawn with IdleSeq behavior tree so the NPC never enters combat or flee trees
+    -- Spawn with our custom dummy_brain (brain GUID: a1b2c3d4-0001-4000-8000-100000000001)
+    -- dummy_brain -> dummy_scheduler.xml (pure infinite wait, no flee, no follow, no combat)
+    -- This is defined in pak_source/libs/tables/ai/ XML files.
     System.SpawnEntity({
         class       = self.ENTITY_CLASS,
         name        = entityName,
@@ -164,7 +166,7 @@ function DummySpawner:Spawn()
         orientation = facingDir,
         properties  = {
             guidSharedSoulId        = self.SOUL_GUID,
-            esModularBehaviorTree   = "IdleSeq",   -- KEY: locks NPC to idle, no flee/combat
+            guidBrainId             = "a1b2c3d4-0001-4000-8000-100000000001",  -- dummy_brain
             sWH_AI_EntityCategory   = "bandit",
             bWH_PerceptorObject     = true,
             bWH_PerceptibleObject   = true,
