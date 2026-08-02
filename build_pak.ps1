@@ -51,8 +51,9 @@ if (Test-Path $aiSrcDir) {
 # --- AI table XMLs (brain / subbrain / switching) ---
 $aiTableDir = Join-Path $pakSource "libs\tables\ai"
 if (Test-Path $aiTableDir) {
-    foreach ($f in Get-ChildItem $aiTableDir -Filter "*.xml") {
-        Add-FileToZip $zip "libs/tables/ai/$($f.Name)" $f.FullName
+    foreach ($f in Get-ChildItem $aiTableDir -Recurse -Filter "*.xml") {
+        $relPath = $f.FullName.Substring($pakSource.Length + 1).Replace("\", "/")
+        Add-FileToZip $zip $relPath $f.FullName
     }
 }
 

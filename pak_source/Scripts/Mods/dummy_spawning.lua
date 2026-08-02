@@ -62,20 +62,32 @@ function DummySpawner:SetHostileState(hostile)
     local entity = System.GetEntity(self.spawnedEntityId)
     if not entity then return end
 
+    local pl = self:GetPlayer()
+    local targetId = pl and (pl.this and pl.this.id or pl.id) or nil
+
     if hostile then
         self:Log("Dumb Dumb is now HOSTILE!")
         pcall(function() entity.soul:SetHostile(true) end)
+        if targetId then
+            pcall(function() entity.soul:SetTarget(targetId) end)
+        end
         pcall(function() entity.human:DrawWeapon(true) end)
+        if AI and AI.ChangeFaction then
+            pcall(function() AI.ChangeFaction(entity.id, "bandit") end)
+        end
         if Game and Game.SendInfoText then
-            Game.SendInfoText("Dumb Dumb: Hostile (Attack)", false, 0, 3)
+            Game.SendInfoText("ui_dummy_info_hostile", false, 0, 3)
         end
     else
         self:Log("Dumb Dumb is now WAITING (Neutral).")
         pcall(function() entity.soul:SetTarget(nil) end)
         pcall(function() entity.soul:SetHostile(false) end)
         pcall(function() entity.human:DrawWeapon(false) end)
+        if AI and AI.ChangeFaction then
+            pcall(function() AI.ChangeFaction(entity.id, "dummyFaction") end)
+        end
         if Game and Game.SendInfoText then
-            Game.SendInfoText("Dumb Dumb: Waiting (Neutral)", false, 0, 3)
+            Game.SendInfoText("ui_dummy_info_waiting", false, 0, 3)
         end
     end
 end
@@ -198,6 +210,13 @@ function DummySpawner:Spawn()
 
     self.spawnedEntityId = entity.id
     self:Log("Spawned Dumb Dumb (id=" .. tostring(entity.id) .. ")")
+
+    -- Equip a training sword so Dumb Dumb can attack when Hostile
+    pcall(function()
+        if entity.actor and entity.actor.EquipWeaponPreset then
+            entity.actor:EquipWeaponPreset("94600b75-8cd2-42f5-8a85-9e5ad0db8318")
+        end
+    end)
 
     -- Apply immediately
     self:ApplyName(entity)
