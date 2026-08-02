@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <database xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="barbora" xsi:noNamespaceSchemaLocation="../database.xsd">
 	<clothing_presets version="2">
-		<!-- Custom Dummy Heavy Full Plate Armor Preset -->
+		<!-- Custom Dummy Heavy Full Plate Armor Preset with Padded Chausses & Full Leg Plate Harness -->
 		<clothing_preset clothing_preset_id="a1b2c3d4-0004-4000-8000-100000000004" clothing_preset_name="clothing_preset_dummy_full_plate" gender="Male" prefers_hood_on="false" social_class_id="3">
 			<Items>
-				<Guid>d87e0065-4eae-429f-917a-df1db1b7285a</Guid> <!-- Boots -->
-				<Guid>4c211401-3edc-4f85-b489-206b229420fb</Guid> <!-- Full Plate Legs / Greaves -->
-				<Guid>63eff267-424a-43fd-a5ec-132c89c286f0</Guid> <!-- Hourglass Plate Gauntlets -->
-				<Guid>d89df714-7b5e-41a0-a3f6-d9538a97e630</Guid> <!-- Full Plate Arms -->
-				<Guid>5d85d44c-0f91-477d-95a3-61bde2d0164b</Guid> <!-- Steel Plate Cuirass / Breastplate -->
-				<Guid>b1b9a304-4f2c-4e43-8f2c-166abf25243c</Guid> <!-- Chainmail Hauberk -->
-				<Guid>a6f4fcf5-9d0a-45c4-8641-b9689415983b</Guid> <!-- Long Gambeson -->
-				<Guid>cd17455c-b023-4977-8205-4f2685370b5e</Guid> <!-- Mail Coif -->
-				<Guid>d8c9ae5a-ac99-479b-9529-277814dd629f</Guid> <!-- Visored Bascinet Helmet -->
+				<Guid>d87e0065-4eae-429f-917a-df1db1b7285a</Guid> <!-- Boots: BootsAnkle02_m01_B -->
+				<Guid>a363573e-57dd-4eda-9b44-d9d9ddf47a5d</Guid> <!-- Inner Legs: Padded Chausses / Hose -->
+				<Guid>f44e20f0-c31b-4dc7-91a9-140c9d367ab8</Guid> <!-- Legs: LegsPadded01_m08_C3 -->
+				<Guid>4c211401-3edc-4f85-b489-206b229420fb</Guid> <!-- Outer Legs: Full Plate Leg Harness (LegsPlate05_m04_C3) -->
+				<Guid>1b94661c-7de9-4a15-a870-110eb771ac8d</Guid> <!-- Leg Plate: LegsPlate02_m03_B4 -->
+				<Guid>63eff267-424a-43fd-a5ec-132c89c286f0</Guid> <!-- Gloves: Hourglass Plate Gauntlets -->
+				<Guid>d89df714-7b5e-41a0-a3f6-d9538a97e630</Guid> <!-- Arms: Full Plate Arm Harness (ArmPlate02_m01_C3) -->
+				<Guid>5d85d44c-0f91-477d-95a3-61bde2d0164b</Guid> <!-- Chest: Steel Plate Cuirass / Breastplate (Cuirass05_m04_B3) -->
+				<Guid>b1b9a304-4f2c-4e43-8f2c-166abf25243c</Guid> <!-- Torso: Mail Hauberk (MailShort01_m01_C4) -->
+				<Guid>a6f4fcf5-9d0a-45c4-8641-b9689415983b</Guid> <!-- Under Torso: Long Gambeson (GambesonLong01_m04_C3) -->
+				<Guid>cd17455c-b023-4977-8205-4f2685370b5e</Guid> <!-- Head Coif: Mail Coif (CoifMail01_m04_C2) -->
+				<Guid>2ebcd914-64dc-499f-80c0-b606636e12f9</Guid> <!-- Neck: Chainmail Collar (CollarChain01_m04_C1) -->
+				<Guid>d8c9ae5a-ac99-479b-9529-277814dd629f</Guid> <!-- Helmet: Visored Bascinet (BascinetVisor02_m03_D3) -->
 			</Items>
 		</clothing_preset>
 	</clothing_presets>
