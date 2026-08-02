@@ -8,7 +8,9 @@ DummySpawner.SPAWN_DISTANCE    = 2.0
 DummySpawner.ENTITY_CLASS      = "NPC"
 DummySpawner.ENTITY_NAME       = "Dumb Dumb"
 DummySpawner.LOG_PREFIX        = "[Dummy] "
-DummySpawner.SOUL_GUID         = "4c8d59ed-f203-4e49-9217-104440b45a51"
+
+-- Standalone KCD2 Male Combat/Bandit Soul GUID (Never Flees, Supports Nametags)
+DummySpawner.SOUL_GUID         = "18a63cbf-db72-435d-9b89-ea47ea6b5ec2"
 
 DummySpawner.spawnedEntityId   = nil
 DummySpawner.currentPresetIdx  = 1
@@ -74,6 +76,9 @@ function DummySpawner:Spawn()
     local spawnPos, facingDir = self:GetPosInFront(pl, self.SPAWN_DISTANCE)
     local entityName = "DummyTarget_DumbDumb_" .. tostring(math.random(10000, 99999))
 
+    --------------------------------------------------
+    -- Spawn Standalone Dummy Shell
+    --------------------------------------------------
     System.SpawnEntity({
         class       = self.ENTITY_CLASS,
         name        = entityName,
@@ -81,9 +86,12 @@ function DummySpawner:Spawn()
         orientation = facingDir,
         properties  = {
             guidSharedSoulId      = self.SOUL_GUID,
+            sName                 = "Dumb Dumb",
+            soc_name              = "Dumb Dumb",
             sWH_AI_EntityCategory = "bandit",
             bWH_PerceptorObject   = true,
             bWH_PerceptibleObject = true,
+            bInvulnerable         = true,
         }
     })
 
@@ -96,14 +104,25 @@ function DummySpawner:Spawn()
     self.spawnedEntityId = entity.id
     self:Log("Spawned standalone 'Dumb Dumb' (id=" .. tostring(entity.id) .. ")")
 
+    --------------------------------------------------
     -- 1. Display Name "Dumb Dumb"
+    --------------------------------------------------
     pcall(function() entity:SetName("Dumb Dumb") end)
+    if entity.Properties then
+        entity.Properties.sName = "Dumb Dumb"
+        entity.Properties.soc_name = "Dumb Dumb"
+    end
     if entity.soul then
         pcall(function() entity.soul:SetUIName("Dumb Dumb") end)
         pcall(function() entity.soul:SetCustomName("Dumb Dumb") end)
     end
+    if entity.actor then
+        pcall(function() entity.actor:SetName("Dumb Dumb") end)
+    end
 
-    -- 2. Faction & Crime Ignored
+    --------------------------------------------------
+    -- 2. Bandit Faction & Crime Ignored (No Reputation Loss)
+    --------------------------------------------------
     if AI and AI.ChangeFaction then
         pcall(function() AI.ChangeFaction(entity.id, "bandit") end)
         pcall(function() AI.ChangeFaction(entity.id, "enemy") end)
@@ -115,16 +134,31 @@ function DummySpawner:Spawn()
         pcall(function() entity.soul:SetHostile(true) end)
     end
 
-    -- 3. Freeze AI & Never Flee
+    --------------------------------------------------
+    -- 3. Freeze AI & Disable Fleeing (Never Flee On Hit)
+    --------------------------------------------------
     entity.OnHit = function(selfEnt, hit) return false end
     entity.OnDamage = function(selfEnt, hit) return false end
+
+    if entity.SetInvulnerability then
+        pcall(function() entity:SetInvulnerability(true) end)
+    end
+    entity.invulnerable = true
+
+    if entity.soul then
+        pcall(function() entity.soul:SetScriptContext("combat_flee", false) end)
+        pcall(function() entity.soul:SetScriptContext("crime_interruptFlee", false) end)
+        pcall(function() entity.soul:SetScriptContext("crime_fleeAfterSurrender", false) end)
+    end
 
     if AI then
         pcall(function() AI.SetLeader(entity.id, nil) end)
         pcall(function() AI.Enable(entity.id, false) end)
         pcall(function() AI.SetBehaviorVariable(entity.id, "IsDisabled", 1) end)
         pcall(function() AI.SetBehaviorVariable(entity.id, "Alertness", 0) end)
+        pcall(function() AI.SetBehaviorVariable(entity.id, "bIsDummy", 1) end)
     end
+
     if entity.EnableAI then
         pcall(function() entity:EnableAI(false) end)
     end
@@ -132,7 +166,9 @@ function DummySpawner:Spawn()
     entity.AI.bDisableAI = true
     entity.AI.bIgnoredByAI = true
 
-    -- 4. Inject Interaction Action
+    --------------------------------------------------
+    -- 4. Inject Interaction Action (Change Armor Preset)
+    --------------------------------------------------
     if DummyInteraction and DummyInteraction.Inject then
         DummyInteraction:Inject(entity)
     end
