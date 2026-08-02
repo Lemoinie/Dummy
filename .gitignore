@@ -1,0 +1,14 @@
+# Build artifacts & binaries
+Data/*.pak
+
+# Source dumps and temporary folders
+kcd2-mercenaries-mod-main/
+mercenaries_source/
+extracted_scripts/
+_backup_v1/
+scratch/
+*.log
+
+# IDE files
+.vscode/
+.idea/
