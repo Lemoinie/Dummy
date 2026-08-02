@@ -1,5 +1,9 @@
 # Build artifacts & binaries
 Data/*.pak
+bin-debug/
+bin-release/
+[Oo]bj/
+[Bb]in/
 
 # Source dumps and temporary folders
 kcd2-mercenaries-mod-main/
@@ -9,6 +13,13 @@ _backup_v1/
 scratch/
 *.log
 
-# IDE files
+# IDE and settings files
 .vscode/
 .idea/
+.settings/
+
+# Executables
+*.swf
+*.air
+*.ipa
+*.apk
