@@ -32,11 +32,12 @@ if (Test-Path $xmlPath) {
 }
 
 # --- Lua scripts: registered under all known prefixes the engine searches ---
-$luaPrefixes = @("Scripts/Systems","Scripts/Utils","Scripts/mods","scripts/mods","Scripts/Startup")
+$luaPrefixes = @("Scripts/Systems", "Scripts/Utils", "Scripts/mods", "scripts/mods", "Scripts/Startup")
 $luaFiles = Get-ChildItem -Path (Join-Path $pakSource "Scripts\mods") -Filter "*.lua"
 foreach ($f in $luaFiles) {
     foreach ($prefix in $luaPrefixes) {
-        Add-FileToZip $zip "$prefix/$($f.Name)" $f.FullName
+        $entryName = $prefix + "/" + $f.Name
+        Add-FileToZip $zip $entryName $f.FullName
     }
 }
 
@@ -44,7 +45,8 @@ foreach ($f in $luaFiles) {
 $aiSrcDir = Join-Path $pakSource "AI"
 if (Test-Path $aiSrcDir) {
     foreach ($f in Get-ChildItem $aiSrcDir -Filter "*.xml") {
-        Add-FileToZip $zip "AI/$($f.Name)" $f.FullName
+        $entryName = "AI/" + $f.Name
+        Add-FileToZip $zip $entryName $f.FullName
     }
 }
 
@@ -61,7 +63,8 @@ if (Test-Path $aiTableDir) {
 $rpgTableDir = Join-Path $pakSource "libs\tables\rpg"
 if (Test-Path $rpgTableDir) {
     foreach ($f in Get-ChildItem $rpgTableDir -Filter "*.xml") {
-        Add-FileToZip $zip "libs/tables/rpg/$($f.Name)" $f.FullName
+        $entryName = "libs/tables/rpg/" + $f.Name
+        Add-FileToZip $zip $entryName $f.FullName
     }
 }
 
@@ -69,7 +72,8 @@ if (Test-Path $rpgTableDir) {
 $itemTableDir = Join-Path $pakSource "libs\tables\item"
 if (Test-Path $itemTableDir) {
     foreach ($f in Get-ChildItem $itemTableDir -Filter "*.xml") {
-        Add-FileToZip $zip "libs/tables/item/$($f.Name)" $f.FullName
+        $entryName = "libs/tables/item/" + $f.Name
+        Add-FileToZip $zip $entryName $f.FullName
     }
 }
 
@@ -77,7 +81,8 @@ if (Test-Path $itemTableDir) {
 $skaldTableDir = Join-Path $pakSource "libs\tables\skald"
 if (Test-Path $skaldTableDir) {
     foreach ($f in Get-ChildItem $skaldTableDir -Filter "*.xml") {
-        Add-FileToZip $zip "libs/tables/skald/$($f.Name)" $f.FullName
+        $entryName = "libs/tables/skald/" + $f.Name
+        Add-FileToZip $zip $entryName $f.FullName
     }
 }
 
