@@ -5,6 +5,7 @@
   <Row><Cell>ui_dummy_info_waiting</Cell><Cell>Your dummy is waiting</Cell><Cell>Your dummy is waiting</Cell></Row>
   <Row><Cell>ui_dummy_info_hostile</Cell><Cell>Your dummy turns hostile</Cell><Cell>Your dummy turns hostile</Cell></Row>
   <Row><Cell>char_dumb_dumb</Cell><Cell>Dumb Dumb</Cell><Cell>Dumb Dumb</Cell></Row>
+  <Row><Cell>char_dumb_dumb_uiName</Cell><Cell>Dumb Dumb</Cell><Cell>Dumb Dumb</Cell></Row>
   <Row><Cell>ui_dumb_dumb</Cell><Cell>Dumb Dumb</Cell><Cell>Dumb Dumb</Cell></Row>
   <Row><Cell>ui_dummy_change_preset_light</Cell><Cell>Armor: Light</Cell><Cell>Armor: Light</Cell></Row>
   <Row><Cell>ui_dummy_change_preset_medium</Cell><Cell>Armor: Medium</Cell><Cell>Armor: Medium</Cell></Row>
