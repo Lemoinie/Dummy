@@ -1,5 +1,7 @@
 <Table>
   <Row><Cell>ui_dummy_change_preset</Cell><Cell>Change Armor Preset</Cell><Cell>Change Armor Preset</Cell></Row>
+  <Row><Cell>ui_dummy_make_hostile</Cell><Cell>Make Hostile</Cell><Cell>Make Hostile</Cell></Row>
+  <Row><Cell>ui_dummy_make_wait</Cell><Cell>Wait Here</Cell><Cell>Wait Here</Cell></Row>
   <Row><Cell>ui_dummy_change_preset_light</Cell><Cell>Armor: Light</Cell><Cell>Armor: Light</Cell></Row>
   <Row><Cell>ui_dummy_change_preset_medium</Cell><Cell>Armor: Medium</Cell><Cell>Armor: Medium</Cell></Row>
   <Row><Cell>ui_dummy_change_preset_heavy</Cell><Cell>Armor: Heavy</Cell><Cell>Armor: Heavy</Cell></Row>
