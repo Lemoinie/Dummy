@@ -108,3 +108,10 @@ Or add to your `autoexec.cfg`:
 
 - **100% Standalone:** Fully compatible with *Mercenaries* mod and all other KCD2 mods.
 - Uses dedicated GUIDs for souls, brains, subbrains, and clothing presets, custom `dummyFaction`, custom `ui_dummy_*` localization keys, and isolated Lua namespaces (`DummySpawner`, `DummyEquipment`, `DummyInteraction`).
+
+---
+
+## 🙏 Credits & Acknowledgments
+
+- **Written from scratch:** All Lua scripts, AI behavior tree XMLs, database tables, and localization keys in this codebase were written from scratch specifically for the *Dummy* mod.
+- **Special Thanks:** Credit to **Alex / Heragoga** ([*Mercenaries* mod for KCD2](https://github.com/Heragoga/kcd2-mercenaries-mod)) for serving as a technical reference for KCD2 modular structure, AI behavior tree routing, and interactor action injection techniques.
