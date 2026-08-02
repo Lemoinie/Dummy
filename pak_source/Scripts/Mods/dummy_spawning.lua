@@ -86,6 +86,12 @@ function DummySpawner:SetHostileState(hostile)
         if AI and AI.ChangeFaction then
             pcall(function() AI.ChangeFaction(entity.id, "dummyFaction") end)
         end
+        -- Sheathe weapon & clear target immediately
+        pcall(function()
+            if entity.actor and entity.human then
+                entity.human:DrawWeapon(false)
+            end
+        end)
         if Game and Game.SendInfoText then
             Game.SendInfoText("ui_dummy_info_waiting", false, 0, 3)
         end
