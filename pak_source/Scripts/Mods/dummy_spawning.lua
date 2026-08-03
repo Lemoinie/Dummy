@@ -327,8 +327,6 @@ function DummySpawner:Spawn()
             bWH_PerceptorObject     = true,
             bWH_PerceptibleObject   = true,
             bInvulnerable           = true,
-            bSaved_by_game          = true,
-            bSerialize              = true,
         }
     })
 
