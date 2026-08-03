@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Database xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="brambora">
+    <Skald>
+        <Quest Name="dummy_dialog_quest" Type="Activity" Players="0" Repeatable="true">
+            <Ports>
+                <Port Name="run" Direction="In" Type="trigger" />
+            </Ports>
+            <Definitions>
+                <Definition File="dummy_dialog_quest/dummy_dialog.xml" />
+            </Definitions>
+            <Nodes>
+                <dummy_dialog Name="dummy_dialog" PositionY="0" PositionX="0" />
+
+                <!-- Dialogue choice token triggers -->
+                <EventFunction Name="exec_token_heal" PositionY="100" PositionX="400" MethodName="wh::entitymodule::CreatePlayerReward" DeclaringType="wh::entitymodule">
+                    <Constant Name="ItemClass" Value="679a655e-189d-4519-b437-d00000000001" />
+                    <Constant Name="Amount" Value="1" />
+                    <Constant Name="ShowUINotification" Value="false" />
+                    <Edge From="dummy_dialog.dummy_heal" To="Exec" />
+                </EventFunction>
+
+                <EventFunction Name="exec_token_immortal" PositionY="200" PositionX="400" MethodName="wh::entitymodule::CreatePlayerReward" DeclaringType="wh::entitymodule">
+                    <Constant Name="ItemClass" Value="679a655e-189d-4519-b437-d00000000002" />
+                    <Constant Name="Amount" Value="1" />
+                    <Constant Name="ShowUINotification" Value="false" />
+                    <Edge From="dummy_dialog.dummy_immortal" To="Exec" />
+                </EventFunction>
+
+                <EventFunction Name="exec_token_preset_1" PositionY="300" PositionX="400" MethodName="wh::entitymodule::CreatePlayerReward" DeclaringType="wh::entitymodule">
+                    <Constant Name="ItemClass" Value="679a655e-189d-4519-b437-d00000000003" />
+                    <Constant Name="Amount" Value="1" />
+                    <Constant Name="ShowUINotification" Value="false" />
+                    <Edge From="dummy_dialog.dummy_preset_1" To="Exec" />
+                </EventFunction>
+
+                <EventFunction Name="exec_token_preset_2" PositionY="400" PositionX="400" MethodName="wh::entitymodule::CreatePlayerReward" DeclaringType="wh::entitymodule">
+                    <Constant Name="ItemClass" Value="679a655e-189d-4519-b437-d00000000004" />
+                    <Constant Name="Amount" Value="1" />
+                    <Constant Name="ShowUINotification" Value="false" />
+                    <Edge From="dummy_dialog.dummy_preset_2" To="Exec" />
+                </EventFunction>
+
+                <EventFunction Name="exec_token_preset_3" PositionY="500" PositionX="400" MethodName="wh::entitymodule::CreatePlayerReward" DeclaringType="wh::entitymodule">
+                    <Constant Name="ItemClass" Value="679a655e-189d-4519-b437-d00000000005" />
+                    <Constant Name="Amount" Value="1" />
+                    <Constant Name="ShowUINotification" Value="false" />
+                    <Edge From="dummy_dialog.dummy_preset_3" To="Exec" />
+                </EventFunction>
+            </Nodes>
+        </Quest>
+    </Skald>
+</Database>

@@ -19,14 +19,14 @@ A modular, standalone mod for **Kingdom Come: Deliverance II** that spawns a cus
 - **Suppressed Panic:** Enclosed within `<EntityContext context="crime_suppressBehavioralReaction">` and `<EntityContext context="crime_preventDespawn">`.
 - Dumb Dumb **never flees**, runs away, or panics regardless of how much damage he receives.
 
-### 🎮 In-Game Interaction Prompts (E & V Keys)
-Looking at Dumb Dumb displays custom interactive prompts:
-- **Press `E` (`use`): "Talk"** — Opens a Lua-driven dialog menu with quality-of-life options. No console commands needed:
-  - **`E` → "Heal yourself"** — Restores Dumb Dumb to full health immediately.
-  - **Hold `V` → "Become Immortal" / "Disable Immortality"** — Toggles Dumb Dumb's invulnerability on or off.
-  - **`G` (loot key) → "Change Equipment"** — Opens an equipment sub-menu listing all 3 armor presets. Press `E` to apply the highlighted preset, or `V` to go back.
-  - **Talk key → "End Dialog"** — Closes the dialog menu and returns to the normal interaction prompt.
-- **Hold `V` (`companion_bond`): "Make Hostile" / "Wait Here"** — Toggles Dumb Dumb between two operational modes (only visible when menu is closed):
+### 🎮 In-Game Dialogue & Interaction Prompts
+Looking at Dumb Dumb displays interactive prompts:
+- **Press `E` (`talk`): "Talk"** — Opens the native in-game Skald dialogue screen with full camera cut-in and interactive options (no extra keybinds needed):
+  - **"Heal yourself"** — Restores Dumb Dumb to 100% full health immediately.
+  - **"Become immortal"** — Toggles Dumb Dumb's invulnerability on or off.
+  - **"Change equipments"** — Opens an armor preset dialogue sub-menu (Light Armor, Medium Armor, Heavy Full Plate Armor).
+  - **"(End Dialog)"** — Exits dialogue cleanly.
+- **Hold `V` (`companion_bond`): "Make Hostile" / "Wait Here"** — Toggles Dumb Dumb between two operational modes:
   - **Wait Mode (Neutral - Default):** Dumb Dumb stands completely still, sheathes weapon, and acts as a stationary target.
   - **Hostile Mode (Combat Practice):** Dumb Dumb draws weapon and engages Henry in melee combat for sparring practice. Holding `V` again instantly disengages combat (via watchdog loop in `combat_melee.xml`), sheathes weapon, clears target, and returns Dumb Dumb back to Wait mode.
 

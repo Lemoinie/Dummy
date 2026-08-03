@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<database xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="barbora" xsi:noNamespaceSchemaLocation="../database.xsd">
+	<items>
+		<!-- Token item 1: Heal -->
+		<item item_id="679a655e-189d-4519-b437-d00000000001" item_name="dummy_token_heal" ui_name="dummy_token_heal" item_category_id="1" item_type_id="1" weight="0" price="0" />
+		<!-- Token item 2: Immortal -->
+		<item item_id="679a655e-189d-4519-b437-d00000000002" item_name="dummy_token_immortal" ui_name="dummy_token_immortal" item_category_id="1" item_type_id="1" weight="0" price="0" />
+		<!-- Token item 3: Equip Light -->
+		<item item_id="679a655e-189d-4519-b437-d00000000003" item_name="dummy_token_preset_1" ui_name="dummy_token_preset_1" item_category_id="1" item_type_id="1" weight="0" price="0" />
+		<!-- Token item 4: Equip Medium -->
+		<item item_id="679a655e-189d-4519-b437-d00000000004" item_name="dummy_token_preset_2" ui_name="dummy_token_preset_2" item_category_id="1" item_type_id="1" weight="0" price="0" />
+		<!-- Token item 5: Equip Heavy -->
+		<item item_id="679a655e-189d-4519-b437-d00000000005" item_name="dummy_token_preset_3" ui_name="dummy_token_preset_3" item_category_id="1" item_type_id="1" weight="0" price="0" />
+	</items>
+</database>

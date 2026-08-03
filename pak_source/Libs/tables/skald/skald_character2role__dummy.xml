@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<database xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="barbora" xsi:noNamespaceSchemaLocation="../database.xsd">
+	<skald_character2roles version="1">
+		<skald_character2role role_id="role_dummy" skald_character_id="char_dumb_dumb" />
+	</skald_character2roles>
+</database>

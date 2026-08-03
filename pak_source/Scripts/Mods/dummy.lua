@@ -71,6 +71,20 @@ if System and System.AddCCommand then
     end
 end
 
+-- Dialogue token checking loop
+function dummy_on_update()
+    if DummySpawner and DummySpawner.CheckDialogueTokens then
+        DummySpawner:CheckDialogueTokens()
+    end
+    if Script and Script.SetTimer then
+        Script.SetTimer(500, dummy_on_update)
+    end
+end
+
+if Script and Script.SetTimer then
+    Script.SetTimer(500, dummy_on_update)
+end
+
 -- Auto-bind default spawn hotkey on load (default '/')
 if DummySpawner and DummySpawner.BindKey then
     DummySpawner:BindKey()

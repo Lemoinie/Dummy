@@ -81,6 +81,15 @@ if (Test-Path $skaldTableDir) {
     }
 }
 
+# --- Quest XMLs (Skald dialogue / quest trees) ---
+$questsDir = Join-Path $pakSource "quests"
+if (Test-Path $questsDir) {
+    foreach ($f in Get-ChildItem $questsDir -Recurse -Filter "*.xml") {
+        $relPath = $f.FullName.Substring($pakSource.Length + 1).Replace("\", "/")
+        Add-FileToZip $zip $relPath $f.FullName
+    }
+}
+
 $zip.Dispose()
 Write-Host "  -> $dataPak"
 

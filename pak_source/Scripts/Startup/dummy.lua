@@ -38,6 +38,43 @@ function DummySpawner:BindKey(key)
     end
 end
 
+function DummySpawner:CheckDialogueTokens()
+    local pl = self:GetPlayer()
+    if not pl or not pl.inventory then return end
+
+    local tokens = {
+        { id = "679a655e-189d-4519-b437-d00000000001", action = function() DummySpawner:Heal() end },
+        { id = "679a655e-189d-4519-b437-d00000000002", action = function() if DummyInteraction and DummyInteraction.ToggleImmortal then DummyInteraction:ToggleImmortal() end end },
+        { id = "679a655e-189d-4519-b437-d00000000003", action = function() DummySpawner.currentPresetIdx = 1; if DummyEquipment then DummyEquipment:ApplyPreset(DummySpawner.spawnedEntityId, 1) end end },
+        { id = "679a655e-189d-4519-b437-d00000000004", action = function() DummySpawner.currentPresetIdx = 2; if DummyEquipment then DummyEquipment:ApplyPreset(DummySpawner.spawnedEntityId, 2) end end },
+        { id = "679a655e-189d-4519-b437-d00000000005", action = function() DummySpawner.currentPresetIdx = 3; if DummyEquipment then DummyEquipment:ApplyPreset(DummySpawner.spawnedEntityId, 3) end end },
+    }
+
+    for _, t in ipairs(tokens) do
+        local count = 0
+        pcall(function()
+            if pl.inventory.GetCountOfClass then
+                count = pl.inventory:GetCountOfClass(t.id) or 0
+            elseif pl.inventory.GetCount then
+                count = pl.inventory:GetCount(t.id) or 0
+            end
+        end)
+
+        if count > 0 then
+            pcall(function()
+                if pl.inventory.RemoveItemClass then
+                    pl.inventory:RemoveItemClass(t.id, count)
+                elseif pl.inventory.RemoveItem then
+                    pl.inventory:RemoveItem(t.id, count)
+                elseif ItemUtils and ItemUtils.RemoveItemFromInventory then
+                    ItemUtils.RemoveItemFromInventory(pl, t.id, count)
+                end
+            end)
+            t.action()
+        end
+    end
+end
+
 ------------------------------------------------------------
 --  ARMOR PRESETS  –  REAL KCD2 ITEM UUIDs
 ------------------------------------------------------------

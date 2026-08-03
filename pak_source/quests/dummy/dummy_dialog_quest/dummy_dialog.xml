@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Database xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="brambora">
+    <Skald>
+        <FaderDialog Name="dummy_dialog">
+            <Ports>
+                <Port Name="dummy_heal" Direction="Out" Type="trigger" />
+                <Port Name="dummy_immortal" Direction="Out" Type="trigger" />
+                <Port Name="dummy_preset_1" Direction="Out" Type="trigger" />
+                <Port Name="dummy_preset_2" Direction="Out" Type="trigger" />
+                <Port Name="dummy_preset_3" Direction="Out" Type="trigger" />
+            </Ports>
+            <Text StringName="ui_dummy_dlg_root" />
+            <Dialogue TechnicalStatus="Enabled" AllowFarewell="false" AllowGreeting="false">
+                <Decision Name="dec_dummy_main" Priority="General">
+                    <Sequences>
+                        <!-- 1. Heal Yourself -->
+                        <Sequence EndType="EndDialogue" Name="seq_heal">
+                            <UiPrompt StringName="ui_dummy_dlg_heal" />
+                            <Elements>
+                                <Response Role="HENRY">
+                                    <Text StringName="dummy_henry_heal" />
+                                    <Commands><CameraCommand /></Commands>
+                                </Response>
+                                <Response Role="role_dummy">
+                                    <Text StringName="dummy_npc_heal" />
+                                    <Commands><CameraCommand /></Commands>
+                                </Response>
+                            </Elements>
+                        </Sequence>
+
+                        <!-- 2. Become Immortal / Toggle Immortality -->
+                        <Sequence EndType="EndDialogue" Name="seq_immortal">
+                            <UiPrompt StringName="ui_dummy_dlg_immortal" />
+                            <Elements>
+                                <Response Role="HENRY">
+                                    <Text StringName="dummy_henry_immortal" />
+                                    <Commands><CameraCommand /></Commands>
+                                </Response>
+                                <Response Role="role_dummy">
+                                    <Text StringName="dummy_npc_immortal" />
+                                    <Commands><CameraCommand /></Commands>
+                                </Response>
+                            </Elements>
+                        </Sequence>
+
+                        <!-- 3. Change Equipments (Sub-decision) -->
+                        <Sequence EndType="Decision" Name="seq_equip">
+                            <UiPrompt StringName="ui_dummy_dlg_equip" />
+                            <Elements>
+                                <Response Role="HENRY">
+                                    <Text StringName="dummy_henry_equip" />
+                                    <Commands><CameraCommand /></Commands>
+                                </Response>
+                            </Elements>
+                            <Decision Name="dec_equip_options">
+                                <Sequences>
+                                    <Sequence EndType="EndDialogue" Name="seq_preset_1">
+                                        <UiPrompt StringName="ui_dummy_change_preset_light" />
+                                        <Elements>
+                                            <Response Role="role_dummy">
+                                                <Text StringName="dummy_npc_preset_1" />
+                                                <Commands><CameraCommand /></Commands>
+                                            </Response>
+                                        </Elements>
+                                    </Sequence>
+                                    <Sequence EndType="EndDialogue" Name="seq_preset_2">
+                                        <UiPrompt StringName="ui_dummy_change_preset_medium" />
+                                        <Elements>
+                                            <Response Role="role_dummy">
+                                                <Text StringName="dummy_npc_preset_2" />
+                                                <Commands><CameraCommand /></Commands>
+                                            </Response>
+                                        </Elements>
+                                    </Sequence>
+                                    <Sequence EndType="EndDialogue" Name="seq_preset_3">
+                                        <UiPrompt StringName="ui_dummy_change_preset_heavy" />
+                                        <Elements>
+                                            <Response Role="role_dummy">
+                                                <Text StringName="dummy_npc_preset_3" />
+                                                <Commands><CameraCommand /></Commands>
+                                            </Response>
+                                        </Elements>
+                                    </Sequence>
+                                </Sequences>
+                            </Decision>
+                        </Sequence>
+
+                        <!-- 4. End Dialog -->
+                        <Sequence EndType="EndDialogue" Name="seq_end">
+                            <UiPrompt StringName="ui_dummy_dlg_end" />
+                            <Elements>
+                                <Response Role="HENRY">
+                                    <Text StringName="dummy_henry_end" />
+                                    <Commands><CameraCommand /></Commands>
+                                </Response>
+                            </Elements>
+                        </Sequence>
+                    </Sequences>
+                </Decision>
+            </Dialogue>
+        </FaderDialog>
+    </Skald>
+</Database>
