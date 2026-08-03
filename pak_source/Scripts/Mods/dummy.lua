@@ -1,12 +1,12 @@
 ------------------------------------------------------------
---  dummy.lua  –  Dummy Mod Entry Point & Dedicated On-Screen F3 Menu
+--  dummy.lua  –  Dummy Mod Entry Point & Minimap Companion Menu Panel Integration
 ------------------------------------------------------------
 
 if System and System.LogAlways then
     System.LogAlways("[Dummy] === LOADING DUMMY.LUA ===")
 end
 
--- Global Wrapper Functions for Commands
+-- Global Wrapper Functions for Console Commands
 function dummy_spawn() DummySpawner:Toggle() end
 function dummy_next()  DummySpawner:NextPreset() end
 function dummy_prev()  DummySpawner:PrevPreset() end
@@ -66,97 +66,114 @@ function dummy_autoheal(enable)
 end
 
 ------------------------------------------------------------
---  DEDICATED ON-SCREEN F3 MENU SYSTEM
+--  MINIMAP COMPANION MENU PANEL (version.dll) INTEGRATION
 ------------------------------------------------------------
 
-DummyMenu = DummyMenu or { isOpen = false, sel = 1 }
+function Dummy_InjectMinimapMenu()
+    -- Initialize or hook into global minimap menu table read by version.dll
+    _G.minimap = _G.minimap or {}
+    local M = _G.minimap
+    M.ui = M.ui or { open = false, menu = "main", sel = 1, stack = {} }
+    M.menus = M.menus or {}
 
-function DummyMenu:LockPlayer(lock)
-    pcall(function()
-        if ActionMapManager and ActionMapManager.EnableActionMap then
-            ActionMapManager.EnableActionMap("player", not lock)
+    -- Build Dumb Dumb Submenu definition
+    local onoff = function(v) return v and "ON" or "OFF" end
+    local dummyMenu = {
+        { label = "< Back", back = true, desc = "Return to parent menu." },
+        {
+            label = "Spawn / Despawn",
+            get = function() return DummySpawner.spawnedEntityId and "SPAWNED" or "DESPAWNED" end,
+            change = function() DummySpawner:Toggle() end,
+            desc = "Spawn or despawn Dumb Dumb NPC right in front of Henry."
+        },
+        {
+            label = "Heal Dumb Dumb",
+            action = function() DummySpawner:Heal() end,
+            desc = "Restore Dumb Dumb to 100% full health."
+        },
+        {
+            label = "Immortal Mode",
+            get = function() return onoff(DummySpawner.isImmortal ~= false) end,
+            change = function() if DummyInteraction and DummyInteraction.ToggleImmortal then DummyInteraction:ToggleImmortal() end end,
+            desc = "Toggle Dumb Dumb invulnerability on or off."
+        },
+        {
+            label = "Auto-Heal (Wait)",
+            get = function() return onoff(DummySpawner.autoHealWaiting) end,
+            change = function() dummy_autoheal() end,
+            desc = "Auto-heal Dumb Dumb when health is low in waiting mode."
+        },
+        {
+            label = "Armor Preset",
+            get = function()
+                local names = { "Light", "Medium", "Heavy Full Plate" }
+                return names[DummySpawner.currentPresetIdx or 1] or "Light"
+            end,
+            change = function(dir)
+                if dir and dir < 0 then DummySpawner:PrevPreset() else DummySpawner:NextPreset() end
+            end,
+            desc = "Cycle Dumb Dumb's armor preset (Light / Medium / Heavy Full Plate)."
+        },
+        {
+            label = "Hostile Mode",
+            get = function() return DummySpawner.isHostile and "Hostile (Sparring)" or "Wait (Neutral)" end,
+            change = function() DummySpawner:ToggleHostile() end,
+            desc = "Toggle between stationary target (Wait) and sparring practice (Hostile)."
+        }
+    }
+
+    M.menus.dummy = dummyMenu
+
+    -- Inject into main menu if present
+    if M.menus.main then
+        local exists = false
+        for _, item in ipairs(M.menus.main) do
+            if item.goto_ == "dummy" then
+                exists = true
+                break
+            end
         end
-    end)
-end
-
-function dummy_opt1()
-    dummy_heal()
-end
-
-function dummy_opt2()
-    dummy_immortal()
-end
-
-function dummy_opt3()
-    dummy_autoheal()
-end
-
-function dummy_opt4()
-    dummy_next()
-    local idx = DummySpawner.currentPresetIdx or 1
-    local keys = { "ui_dummy_menu_opt4_1", "ui_dummy_menu_opt4_2", "ui_dummy_menu_opt4_3" }
-    if Game and Game.SendInfoText and keys[idx] then
-        Game.SendInfoText(keys[idx], false, 0, 3)
-    end
-end
-
-function dummy_opt5()
-    if DummySpawner then
-        DummySpawner:ToggleHostile()
-        local key = DummySpawner.isHostile and "ui_dummy_menu_opt5_hostile" or "ui_dummy_menu_opt5_wait"
-        if Game and Game.SendInfoText then
-            Game.SendInfoText(key, false, 0, 3)
-        end
-    end
-end
-
-function dummy_opt6()
-    if DummySpawner then
-        dummy_spawn()
-        local key = DummySpawner.spawnedEntityId and "ui_dummy_menu_opt6_spawn" or "ui_dummy_menu_opt6_despawn"
-        if Game and Game.SendInfoText then
-            Game.SendInfoText(key, false, 0, 3)
-        end
-    end
-end
-
-function dummy_opt0()
-    dummy_menu_close()
-end
-
-function dummy_menu_close()
-    DummyMenu.isOpen = false
-    DummyMenu:LockPlayer(false)
-    if Game and Game.SendInfoText then
-        Game.SendInfoText("ui_dummy_menu_closed_msg", false, 0, 2)
-    end
-end
-
-function dummy_menu()
-    DummyMenu.isOpen = not DummyMenu.isOpen
-
-    if DummyMenu.isOpen then
-        DummyMenu:LockPlayer(true)
-
-        -- Bind quick selection keys 1-6 and 0
-        if System and System.ExecuteCommand then
-            System.ExecuteCommand("bind 1 dummy_opt1")
-            System.ExecuteCommand("bind 2 dummy_opt2")
-            System.ExecuteCommand("bind 3 dummy_opt3")
-            System.ExecuteCommand("bind 4 dummy_opt4")
-            System.ExecuteCommand("bind 5 dummy_opt5")
-            System.ExecuteCommand("bind 6 dummy_opt6")
-            System.ExecuteCommand("bind 0 dummy_opt0")
-        end
-
-        if Game and Game.SendInfoText then
-            Game.SendInfoText("ui_dummy_menu_opened", false, 0, 8)
-        end
-        if System and System.LogAlways then
-            System.LogAlways("[Dummy] Dedicated On-Screen Menu Opened (F3). Player movement locked. Select 1-6 or 0.")
+        if not exists then
+            table.insert(M.menus.main, {
+                label = "Dumb Dumb Mod",
+                goto_ = "dummy",
+                desc = "Configure Dumb Dumb NPC spawning, healing, immortality, and armor presets."
+            })
         end
     else
-        dummy_menu_close()
+        M.menus.main = {
+            {
+                label = "Dumb Dumb Mod",
+                goto_ = "dummy",
+                desc = "Configure Dumb Dumb NPC spawning, healing, immortality, and armor presets."
+            }
+        }
+    end
+
+    if System and System.LogAlways then
+        System.LogAlways("[Dummy] Injected Dumb Dumb Mod options into Minimap Companion Panel (version.dll).")
+    end
+end
+
+-- Try injecting immediately and retry after load
+Dummy_InjectMinimapMenu()
+
+function dummy_menu()
+    -- Open or focus the minimap companion panel on F3
+    if _G.minimap and _G.minimap.UiOpen then
+        _G.minimap.UiOpen(true)
+        if _G.minimap.UiEnter then
+            _G.minimap.UiEnter("dummy")
+        end
+    else
+        Dummy_InjectMinimapMenu()
+        if _G.minimap and _G.minimap.UiOpen then
+            _G.minimap.UiOpen(true)
+        else
+            if Game and Game.SendInfoText then
+                Game.SendInfoText("ui_dummy_menu_opened", false, 0, 4)
+            end
+        end
     end
 end
 
@@ -171,14 +188,7 @@ if System and System.AddCCommand then
     System.AddCCommand("dummy_heal",     "dummy_heal()",        "Heal Dumb Dumb to full health")
     System.AddCCommand("dummy_immortal", "dummy_immortal()",    "Toggle Dumb Dumb invulnerability on/off")
     System.AddCCommand("dummy_autoheal", "dummy_autoheal(%1)",  "Toggle auto-healing in waiting mode (dummy_autoheal 1 / 0)")
-    System.AddCCommand("dummy_menu",     "dummy_menu()",        "Toggle Dumb Dumb F3 Dedicated On-Screen Menu")
-    System.AddCCommand("dummy_opt1",     "dummy_opt1()",        "Menu option 1: Heal")
-    System.AddCCommand("dummy_opt2",     "dummy_opt2()",        "Menu option 2: Toggle Immortal")
-    System.AddCCommand("dummy_opt3",     "dummy_opt3()",        "Menu option 3: Toggle AutoHeal")
-    System.AddCCommand("dummy_opt4",     "dummy_opt4()",        "Menu option 4: Cycle Armor Preset")
-    System.AddCCommand("dummy_opt5",     "dummy_opt5()",        "Menu option 5: Toggle Hostile Mode")
-    System.AddCCommand("dummy_opt6",     "dummy_opt6()",        "Menu option 6: Toggle Spawn")
-    System.AddCCommand("dummy_opt0",     "dummy_opt0()",        "Menu option 0: Close Menu")
+    System.AddCCommand("dummy_menu",     "dummy_menu()",        "Toggle Dumb Dumb Minimap Companion Menu Panel")
 end
 
 -- Auto-bind default spawn hotkey (/) and menu hotkey (F3) on load
