@@ -109,6 +109,17 @@ try {
     Copy-Item $dataPak                              -Destination (Join-Path $gameData "dummy.pak")       -Force -ErrorAction Stop
     Copy-Item $locPak                               -Destination (Join-Path $gameLoc  "English_xml.pak") -Force -ErrorAction Stop
     Copy-Item (Join-Path $scriptDir "mod.manifest") -Destination (Join-Path $gameModDir "mod.manifest")  -Force -ErrorAction Stop
+    
+    # Copy native companion version.dll to mod folder and game Bin folder
+    $dllSrc = Join-Path $scriptDir "version.dll"
+    if (Test-Path $dllSrc) {
+        Copy-Item $dllSrc -Destination (Join-Path $gameModDir "version.dll") -Force -ErrorAction SilentlyContinue
+        $binDir = "C:\Games\Kingdom Come - Deliverance II\Bin\Win64MasterMasterSteamPGO"
+        if (Test-Path $binDir) {
+            Copy-Item $dllSrc -Destination (Join-Path $binDir "version.dll") -Force -ErrorAction SilentlyContinue
+        }
+    }
+
     Write-Host ""
     Write-Host "SUCCESS: Built and installed to $gameModDir!" -ForegroundColor Green
 } catch {
