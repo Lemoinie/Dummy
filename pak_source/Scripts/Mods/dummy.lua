@@ -1,10 +1,13 @@
 ------------------------------------------------------------
---  dummy.lua  –  Dummy Mod Entry Point & Minimap Companion Menu Panel Integration
+--  dummy.lua  –  Dummy Mod Entry Point & Native Panel Integration
 ------------------------------------------------------------
 
 if System and System.LogAlways then
     System.LogAlways("[Dummy] === LOADING DUMMY.LUA ===")
 end
+
+-- Force panel companion key to F3
+_G.minimap_ui_key = "F3"
 
 -- Global Wrapper Functions for Console Commands
 function dummy_spawn() DummySpawner:Toggle() end
@@ -66,17 +69,15 @@ function dummy_autoheal(enable)
 end
 
 ------------------------------------------------------------
---  MINIMAP COMPANION MENU PANEL (version.dll) INTEGRATION
+--  MINIMAP COMPANION MENU PANEL (version.dll / KCD2Minimap.asi) INTEGRATION
 ------------------------------------------------------------
 
 function Dummy_InjectMinimapMenu()
-    -- Initialize or hook into global minimap menu table read by version.dll
     _G.minimap = _G.minimap or {}
     local M = _G.minimap
     M.ui = M.ui or { open = false, menu = "main", sel = 1, stack = {} }
     M.menus = M.menus or {}
 
-    -- Build Dumb Dumb Submenu definition
     local onoff = function(v) return v and "ON" or "OFF" end
     local dummyMenu = {
         { label = "< Back", back = true, desc = "Return to parent menu." },
@@ -124,7 +125,6 @@ function Dummy_InjectMinimapMenu()
 
     M.menus.dummy = dummyMenu
 
-    -- Inject into main menu if present
     if M.menus.main then
         local exists = false
         for _, item in ipairs(M.menus.main) do
@@ -134,7 +134,7 @@ function Dummy_InjectMinimapMenu()
             end
         end
         if not exists then
-            table.insert(M.menus.main, {
+            table.insert(M.menus.main, 1, {
                 label = "Dumb Dumb Mod",
                 goto_ = "dummy",
                 desc = "Configure Dumb Dumb NPC spawning, healing, immortality, and armor presets."
@@ -151,28 +151,23 @@ function Dummy_InjectMinimapMenu()
     end
 
     if System and System.LogAlways then
-        System.LogAlways("[Dummy] Injected Dumb Dumb Mod options into Minimap Companion Panel (version.dll).")
+        System.LogAlways("[Dummy] Registered Dumb Dumb Mod into Minimap Companion Panel.")
     end
 end
 
--- Try injecting immediately and retry after load
+-- Inject menu into global environment immediately
 Dummy_InjectMinimapMenu()
 
 function dummy_menu()
-    -- Open or focus the minimap companion panel on F3
+    Dummy_InjectMinimapMenu()
     if _G.minimap and _G.minimap.UiOpen then
         _G.minimap.UiOpen(true)
         if _G.minimap.UiEnter then
             _G.minimap.UiEnter("dummy")
         end
     else
-        Dummy_InjectMinimapMenu()
-        if _G.minimap and _G.minimap.UiOpen then
-            _G.minimap.UiOpen(true)
-        else
-            if Game and Game.SendInfoText then
-                Game.SendInfoText("ui_dummy_menu_opened", false, 0, 4)
-            end
+        if Game and Game.SendInfoText then
+            Game.SendInfoText("ui_dummy_menu_opened", false, 0, 4)
         end
     end
 end
@@ -188,7 +183,7 @@ if System and System.AddCCommand then
     System.AddCCommand("dummy_heal",     "dummy_heal()",        "Heal Dumb Dumb to full health")
     System.AddCCommand("dummy_immortal", "dummy_immortal()",    "Toggle Dumb Dumb invulnerability on/off")
     System.AddCCommand("dummy_autoheal", "dummy_autoheal(%1)",  "Toggle auto-healing in waiting mode (dummy_autoheal 1 / 0)")
-    System.AddCCommand("dummy_menu",     "dummy_menu()",        "Toggle Dumb Dumb Minimap Companion Menu Panel")
+    System.AddCCommand("dummy_menu",     "dummy_menu()",        "Toggle Dumb Dumb Companion Menu Panel")
 end
 
 -- Auto-bind default spawn hotkey (/) and menu hotkey (F3) on load
