@@ -36,11 +36,8 @@ Cycles cleanly through 3 distinct armor tiers:
 
 ## ⌨️ Keybindings & Hotkeys
 
-- **Default Spawn / Despawn Key:** `/` (Slash)
-  - Pressing `/` instantly spawns or despawns Dumb Dumb right in front of Henry.
+- **Default Spawn / Despawn Key:** None by default (Use `dummy_spawn` in console)
   - ActionMap mapping in `Libs/Config/defaultProfile.xml` and configurable via `dummy.cfg`.
-- **Status Overview Key:** `F3`
-  - Pressing `F3` displays full mod status, current armor tier, invulnerability state, and command list.
 
 ---
 
@@ -50,8 +47,6 @@ This mod is 100% standalone and uses its own configuration file `dummy.cfg` loca
 
 ```ini
 [Settings]
-spawnKey=/
-menuKey=F3
 isImmortal=1
 autoHealWaiting=1
 defaultPreset=1
@@ -63,7 +58,7 @@ defaultPreset=1
 
 1. Extract the mod package into your Kingdom Come II `mods` directory:
    `C:\Games\Kingdom Come - Deliverance II\mods\Dummy`
-2. Launch the game and press `/` to spawn Dumb Dumb!
+2. Launch the game and type `dummy` in the console to spawn Dumb Dumb!
 
 ---
 
@@ -81,7 +76,6 @@ Open the console in-game (`~`):
 | `dummy_immortal` | Toggle Dumb Dumb invulnerability on / off |
 | `dummy_autoheal` | Toggle auto-healing in waiting mode (`dummy_autoheal 1` or `dummy_autoheal 0`) |
 | `dummy_bind <key>` | Rebind spawn toggle hotkey (e.g. `dummy_bind /` or `dummy_bind f6`) |
-| `dummy_menu` *(or `dummy_help`)* | Display the full mod menu and list of commands |
 
 ---
 

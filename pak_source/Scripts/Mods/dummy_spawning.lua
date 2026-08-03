@@ -340,11 +340,6 @@ function DummySpawner:Despawn()
     self.currentPresetIdx = 1
     self.isHostile        = false
     self.isImmortal       = true
-    -- Close dialog menu if open
-    if DummyInteraction then
-        DummyInteraction.menuOpen = false
-        DummyInteraction.menuPage = 0
-    end
 end
 
 function DummySpawner:Toggle()

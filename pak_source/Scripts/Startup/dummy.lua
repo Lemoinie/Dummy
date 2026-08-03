@@ -34,8 +34,7 @@ function DummySpawner:BindKey(key)
     local keyToBind = self.KEYBIND_SPAWN or "/"
     if System and System.ExecuteCommand then
         System.ExecuteCommand("bind " .. keyToBind .. " dummy_spawn")
-        System.ExecuteCommand("bind f3 dummy_menu")
-        self:Log("Bound spawn hotkey to: " .. keyToBind .. " | Configurator menu hotkey: F3")
+        self:Log("Bound spawn hotkey to: " .. keyToBind)
     end
 end
 
