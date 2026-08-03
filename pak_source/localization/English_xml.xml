@@ -10,18 +10,20 @@
   <Row><Cell>ui_dummy_change_preset_light</Cell><Cell>Armor: Light</Cell><Cell>Armor: Light</Cell></Row>
   <Row><Cell>ui_dummy_change_preset_medium</Cell><Cell>Armor: Medium</Cell><Cell>Armor: Medium</Cell></Row>
   <Row><Cell>ui_dummy_change_preset_heavy</Cell><Cell>Armor: Heavy Full Plate</Cell><Cell>Armor: Heavy Full Plate</Cell></Row>
-  <Row><Cell>ui_dummy_dlg_talk</Cell><Cell>Talk</Cell><Cell>Talk</Cell></Row>
-  <Row><Cell>ui_dummy_dlg_heal</Cell><Cell>Heal yourself</Cell><Cell>Heal yourself</Cell></Row>
-  <Row><Cell>ui_dummy_dlg_heal_done</Cell><Cell>Dumb Dumb is fully healed.</Cell><Cell>Dumb Dumb is fully healed.</Cell></Row>
-  <Row><Cell>ui_dummy_dlg_immortal</Cell><Cell>Become Immortal</Cell><Cell>Become Immortal</Cell></Row>
-  <Row><Cell>ui_dummy_dlg_mortal</Cell><Cell>Disable Immortality</Cell><Cell>Disable Immortality</Cell></Row>
-  <Row><Cell>ui_dummy_dlg_immortal_on</Cell><Cell>Dumb Dumb is now Immortal.</Cell><Cell>Dumb Dumb is now Immortal.</Cell></Row>
-  <Row><Cell>ui_dummy_dlg_immortal_off</Cell><Cell>Dumb Dumb is no longer Immortal.</Cell><Cell>Dumb Dumb is no longer Immortal.</Cell></Row>
-  <Row><Cell>ui_dummy_dlg_equip</Cell><Cell>Change Equipment</Cell><Cell>Change Equipment</Cell></Row>
-  <Row><Cell>ui_dummy_dlg_end</Cell><Cell>End Dialog</Cell><Cell>End Dialog</Cell></Row>
-  <Row><Cell>ui_dummy_dlg_back</Cell><Cell>Back</Cell><Cell>Back</Cell></Row>
-  <!-- F3 Configurator Menu HUD Keys -->
-  <Row><Cell>ui_dummy_menu_banner</Cell><Cell>Dumb Dumb Mod [F3]: Configurator menu opened in console (~)</Cell><Cell>Dumb Dumb Mod [F3]: Configurator menu opened in console (~)</Cell></Row>
-  <Row><Cell>ui_dummy_status_spawned</Cell><Cell>Dumb Dumb: SPAWNED</Cell><Cell>Dumb Dumb: SPAWNED</Cell></Row>
-  <Row><Cell>ui_dummy_status_despawned</Cell><Cell>Dumb Dumb: DESPAWNED</Cell><Cell>Dumb Dumb: DESPAWNED</Cell></Row>
+
+  <!-- F3 Configurator HUD Keys -->
+  <Row><Cell>ui_dummy_menu_opened</Cell><Cell>Dumb Dumb Menu [F3]: [1]Heal  [2]Immortal  [3]AutoHeal  [4]Armor  [5]Hostile  [6]Spawn  [0]Close</Cell><Cell>Dumb Dumb Menu [F3]: [1]Heal  [2]Immortal  [3]AutoHeal  [4]Armor  [5]Hostile  [6]Spawn  [0]Close</Cell></Row>
+  <Row><Cell>ui_dummy_menu_closed</Cell><Cell>Dumb Dumb Configurator Menu Closed.</Cell><Cell>Dumb Dumb Configurator Menu Closed.</Cell></Row>
+  <Row><Cell>ui_dummy_menu_opt1</Cell><Cell>[1] Healed Dumb Dumb to 100% full health.</Cell><Cell>[1] Healed Dumb Dumb to 100% full health.</Cell></Row>
+  <Row><Cell>ui_dummy_menu_opt2_on</Cell><Cell>[2] Immortal Mode: ENABLED</Cell><Cell>[2] Immortal Mode: ENABLED</Cell></Row>
+  <Row><Cell>ui_dummy_menu_opt2_off</Cell><Cell>[2] Immortal Mode: DISABLED</Cell><Cell>[2] Immortal Mode: DISABLED</Cell></Row>
+  <Row><Cell>ui_dummy_menu_opt3_on</Cell><Cell>[3] Auto-Heal in Waiting Mode: ENABLED</Cell><Cell>[3] Auto-Heal in Waiting Mode: ENABLED</Cell></Row>
+  <Row><Cell>ui_dummy_menu_opt3_off</Cell><Cell>[3] Auto-Heal in Waiting Mode: DISABLED</Cell><Cell>[3] Auto-Heal in Waiting Mode: DISABLED</Cell></Row>
+  <Row><Cell>ui_dummy_menu_opt4_1</Cell><Cell>[4] Applied Armor Preset 1: Light Armor</Cell><Cell>[4] Applied Armor Preset 1: Light Armor</Cell></Row>
+  <Row><Cell>ui_dummy_menu_opt4_2</Cell><Cell>[4] Applied Armor Preset 2: Medium Armor</Cell><Cell>[4] Applied Armor Preset 2: Medium Armor</Cell></Row>
+  <Row><Cell>ui_dummy_menu_opt4_3</Cell><Cell>[4] Applied Armor Preset 3: Heavy Full Plate Armor</Cell><Cell>[4] Applied Armor Preset 3: Heavy Full Plate Armor</Cell></Row>
+  <Row><Cell>ui_dummy_menu_opt5_hostile</Cell><Cell>[5] Mode: HOSTILE (Sparring Practice)</Cell><Cell>[5] Mode: HOSTILE (Sparring Practice)</Cell></Row>
+  <Row><Cell>ui_dummy_menu_opt5_wait</Cell><Cell>[5] Mode: WAIT (Stationary Target)</Cell><Cell>[5] Mode: WAIT (Stationary Target)</Cell></Row>
+  <Row><Cell>ui_dummy_menu_opt6_spawn</Cell><Cell>[6] Dumb Dumb SPAWNED in front of Henry.</Cell><Cell>[6] Dumb Dumb SPAWNED in front of Henry.</Cell></Row>
+  <Row><Cell>ui_dummy_menu_opt6_despawn</Cell><Cell>[6] Dumb Dumb DESPAWNED.</Cell><Cell>[6] Dumb Dumb DESPAWNED.</Cell></Row>
 </Table>

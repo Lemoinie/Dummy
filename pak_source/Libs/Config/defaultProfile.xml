@@ -2,12 +2,6 @@
 <!--
     Dummy Mod – Custom ActionMap
     ─────────────────────────────
-    This file goes inside your .pak at:
-      Libs/Config/defaultProfile.xml
-
-    The game merges ActionMaps from this path.
-    Using a unique map name ("dummy_spawner") avoids
-    collisions with vanilla or third-party maps.
 -->
 <ActionMaps>
     <ActionMap name="dummy_spawner">
