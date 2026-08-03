@@ -1,5 +1,5 @@
 ------------------------------------------------------------
---  dummy.lua  –  Dummy Mod Main Entry Point & On-Screen F3 Menu
+--  dummy.lua  –  Dummy Mod Entry Point & Dedicated On-Screen F3 Menu
 ------------------------------------------------------------
 
 if System and System.LogAlways then
@@ -66,10 +66,18 @@ function dummy_autoheal(enable)
 end
 
 ------------------------------------------------------------
---  F3 ON-SCREEN CONFIGURATOR MENU SYSTEM
+--  DEDICATED ON-SCREEN F3 MENU SYSTEM
 ------------------------------------------------------------
 
-DummyConfigMenu = DummyConfigMenu or { isOpen = false }
+DummyMenu = DummyMenu or { isOpen = false, sel = 1 }
+
+function DummyMenu:LockPlayer(lock)
+    pcall(function()
+        if ActionMapManager and ActionMapManager.EnableActionMap then
+            ActionMapManager.EnableActionMap("player", not lock)
+        end
+    end)
+end
 
 function dummy_opt1()
     dummy_heal()
@@ -117,17 +125,20 @@ function dummy_opt0()
 end
 
 function dummy_menu_close()
-    DummyConfigMenu.isOpen = false
+    DummyMenu.isOpen = false
+    DummyMenu:LockPlayer(false)
     if Game and Game.SendInfoText then
-        Game.SendInfoText("ui_dummy_menu_closed", false, 0, 2)
+        Game.SendInfoText("ui_dummy_menu_closed_msg", false, 0, 2)
     end
 end
 
 function dummy_menu()
-    DummyConfigMenu.isOpen = not DummyConfigMenu.isOpen
+    DummyMenu.isOpen = not DummyMenu.isOpen
 
-    if DummyConfigMenu.isOpen then
-        -- Bind quick selection keys 1-6 and 0 for the active menu
+    if DummyMenu.isOpen then
+        DummyMenu:LockPlayer(true)
+
+        -- Bind quick selection keys 1-6 and 0
         if System and System.ExecuteCommand then
             System.ExecuteCommand("bind 1 dummy_opt1")
             System.ExecuteCommand("bind 2 dummy_opt2")
@@ -142,7 +153,7 @@ function dummy_menu()
             Game.SendInfoText("ui_dummy_menu_opened", false, 0, 8)
         end
         if System and System.LogAlways then
-            System.LogAlways("[Dummy] On-Screen Configurator Menu Opened (F3). Press 1-6 or 0 to select.")
+            System.LogAlways("[Dummy] Dedicated On-Screen Menu Opened (F3). Player movement locked. Select 1-6 or 0.")
         end
     else
         dummy_menu_close()
@@ -160,7 +171,7 @@ if System and System.AddCCommand then
     System.AddCCommand("dummy_heal",     "dummy_heal()",        "Heal Dumb Dumb to full health")
     System.AddCCommand("dummy_immortal", "dummy_immortal()",    "Toggle Dumb Dumb invulnerability on/off")
     System.AddCCommand("dummy_autoheal", "dummy_autoheal(%1)",  "Toggle auto-healing in waiting mode (dummy_autoheal 1 / 0)")
-    System.AddCCommand("dummy_menu",     "dummy_menu()",        "Toggle Dumb Dumb F3 On-Screen Configurator Menu")
+    System.AddCCommand("dummy_menu",     "dummy_menu()",        "Toggle Dumb Dumb F3 Dedicated On-Screen Menu")
     System.AddCCommand("dummy_opt1",     "dummy_opt1()",        "Menu option 1: Heal")
     System.AddCCommand("dummy_opt2",     "dummy_opt2()",        "Menu option 2: Toggle Immortal")
     System.AddCCommand("dummy_opt3",     "dummy_opt3()",        "Menu option 3: Toggle AutoHeal")
