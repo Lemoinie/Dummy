@@ -50,6 +50,8 @@ Open the console in-game (`~`):
 |---|---|
 | `dummy_spawn` *(or `dummy`)* | Toggle spawn / despawn of Dumb Dumb in front of Henry (bound to `/` by default) |
 | `dummy_bind <key>` | Rebind the spawn/despawn hotkey (e.g., `dummy_bind /` or `dummy_bind f6`) |
+| `dummy_heal` | Heal Dumb Dumb back to full health immediately |
+| `dummy_autoheal [1/0]` | Toggle or set auto-healing in Waiting mode when health is low (default: ON) |
 | `dummy_next` | Cycle forward to the next armor preset |
 | `dummy_prev` | Cycle backward to the previous armor preset |
 | `dummy_hostile` | Toggle Dumb Dumb between Hostile (Combat) and Wait (Neutral) modes |

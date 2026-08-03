@@ -15,6 +15,7 @@ DummySpawner.SOUL_GUID         = "a1b2c3d4-0003-4000-8000-100000000003"
 DummySpawner.spawnedEntityId   = nil
 DummySpawner.currentPresetIdx  = 1
 DummySpawner.isHostile         = false
+DummySpawner.autoHealWaiting   = true         -- Auto-heal NPC in waiting mode if health is low
 
 ------------------------------------------------------------
 --  HELPERS
@@ -35,6 +36,57 @@ function DummySpawner:BindKey(key)
         System.ExecuteCommand("bind " .. keyToBind .. " dummy_spawn")
         self:Log("Bound spawn/despawn hotkey to: " .. keyToBind)
     end
+end
+
+------------------------------------------------------------
+--  HEALING LOGIC
+------------------------------------------------------------
+
+function DummySpawner:Heal(entity)
+    entity = entity or System.GetEntity(self.spawnedEntityId)
+    if not entity then
+        self:Log("No active dummy to heal.")
+        return
+    end
+
+    self:Log("Healing Dumb Dumb to full health...")
+
+    -- 1. Restore soul health & state values
+    if entity.soul then
+        pcall(function()
+            local maxHp = 100
+            if entity.soul.GetState then
+                local currentMax = entity.soul:GetState("health_max") or entity.soul:GetState("max_health")
+                if currentMax and currentMax > 0 then maxHp = currentMax end
+            end
+            if entity.soul.SetState then
+                entity.soul:SetState("health", maxHp)
+            end
+            if entity.soul.Heal then
+                entity.soul:Heal(maxHp)
+            end
+            if entity.soul.RemoveAllBleeding then
+                entity.soul:RemoveAllBleeding()
+            end
+        end)
+    end
+
+    -- 2. Restore actor health
+    pcall(function()
+        if entity.actor and entity.actor.SetHealth then
+            entity.actor:SetHealth(100)
+        end
+        if entity.SetHealth then
+            entity:SetHealth(100)
+        end
+    end)
+
+    -- 3. Restore entity properties health
+    pcall(function()
+        if entity.Properties and entity.Properties.Health then
+            entity.Properties.Health.hp = entity.Properties.Health.max_hp or 100
+        end
+    end)
 end
 
 function DummySpawner:GetPlayer()
@@ -104,6 +156,10 @@ function DummySpawner:SetHostileState(hostile)
                 entity.human:DrawWeapon(false)
             end
         end)
+        -- Auto-heal NPC in Waiting mode if option is enabled
+        if self.autoHealWaiting then
+            self:Heal(entity)
+        end
         if Game and Game.SendInfoText then
             Game.SendInfoText("ui_dummy_info_waiting", false, 0, 3)
         end
@@ -142,9 +198,19 @@ function DummySpawner:FreezeEntity(entity)
         end
     end
 
-    -- Prevent Lua hit/damage callbacks from interrupting AI
-    entity.OnHit    = function() return false end
-    entity.OnDamage = function() return false end
+    -- Prevent Lua hit/damage callbacks from interrupting AI and auto-heal in Waiting mode
+    entity.OnHit = function(hit)
+        if not DummySpawner.isHostile and DummySpawner.autoHealWaiting then
+            DummySpawner:Heal(entity)
+        end
+        return false
+    end
+    entity.OnDamage = function(dmg)
+        if not DummySpawner.isHostile and DummySpawner.autoHealWaiting then
+            DummySpawner:Heal(entity)
+        end
+        return false
+    end
 end
 
 ------------------------------------------------------------
