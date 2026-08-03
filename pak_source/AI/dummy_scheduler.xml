@@ -11,7 +11,7 @@
             <Variable name="mrkev"               type="_wuid"                         values="" isPersistent="0" form="single" />
             <Variable name="dialogRequest"       type="dialogModule:onDialogRequest" values="" isPersistent="0" form="single" />
         </Variables>
-        <Root OneTimeOnly="false" FailState="Recoverable" saveVersion="2">
+        <Root OneTimeOnly="false" FailState="Recoverable" saveVersion="3">
             <Behavior canSkip="1">
                 <SuppressFailure>
                     <Parallel successMode="Any" failureMode="Any">
@@ -22,7 +22,7 @@
                                 <Wait duration="'500ms'" timeType="GameTime" doFail="false" variation="'100ms'" />
                                 <ExecuteLua code="if DummySpawner then if not DummySpawner.spawnedEntityId then DummySpawner:FindSavedDummy() end data.isHostile = DummySpawner.isHostile or false else data.isHostile = false end" />
 
-                                <IfElseCondition failOnCondition="false" condition="$isHostile" saveVersion="2">
+                                <IfElseCondition failOnCondition="false" condition="$isHostile" saveVersion="3">
                                     <Then canSkip="1">
                                         <!-- Hostile Mode: if not already in combat, start combat_melee ONCE -->
                                         <IfCondition failOnCondition="false" condition="~$inCombat">
