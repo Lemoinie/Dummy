@@ -110,17 +110,20 @@ try {
     Copy-Item $locPak                               -Destination (Join-Path $gameLoc  "English_xml.pak") -Force -ErrorAction Stop
     Copy-Item (Join-Path $scriptDir "mod.manifest") -Destination (Join-Path $gameModDir "mod.manifest")  -Force -ErrorAction Stop
     
-    # Copy standalone dummy.cfg configuration file
+    # Copy standalone dummy.cfg configuration file to mod folder and game Bin folder
     $cfgSrc = Join-Path $pakSource "Scripts\Mods\dummy.cfg"
+    $binDir = "C:\Games\Kingdom Come - Deliverance II\Bin\Win64MasterMasterSteamPGO"
     if (Test-Path $cfgSrc) {
         Copy-Item $cfgSrc -Destination (Join-Path $gameModDir "dummy.cfg") -Force -ErrorAction SilentlyContinue
+        if (Test-Path $binDir) {
+            Copy-Item $cfgSrc -Destination (Join-Path $binDir "dummy.cfg") -Force -ErrorAction SilentlyContinue
+        }
     }
 
     # Copy DummyMod.asi to mod folder and game Bin folder
     $asiSrc = Join-Path $scriptDir "DummyMod.asi"
     if (Test-Path $asiSrc) {
         Copy-Item $asiSrc -Destination (Join-Path $gameModDir "DummyMod.asi") -Force -ErrorAction SilentlyContinue
-        $binDir = "C:\Games\Kingdom Come - Deliverance II\Bin\Win64MasterMasterSteamPGO"
         if (Test-Path $binDir) {
             Copy-Item $asiSrc -Destination (Join-Path $binDir "DummyMod.asi") -Force -ErrorAction SilentlyContinue
         }
