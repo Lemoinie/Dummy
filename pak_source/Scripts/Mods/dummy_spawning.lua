@@ -15,6 +15,8 @@ DummySpawner.SOUL_GUID         = "a1b2c3d4-0003-4000-8000-100000000003"
 DummySpawner.spawnedEntityId   = nil
 DummySpawner.currentPresetIdx  = 1
 DummySpawner.isHostile         = false
+DummySpawner.isImmortal        = true          -- Tracks immortality (default ON — spawns invulnerable)
+DummySpawner.dialogOpen        = false         -- True when the in-world dialog menu is open
 DummySpawner.autoHealWaiting   = true         -- Auto-heal NPC in waiting mode if health is low
 
 ------------------------------------------------------------
@@ -339,6 +341,8 @@ function DummySpawner:Despawn()
     self.spawnedEntityId  = nil
     self.currentPresetIdx = 1
     self.isHostile        = false
+    self.isImmortal       = true
+    self.dialogOpen       = false
 end
 
 function DummySpawner:Toggle()

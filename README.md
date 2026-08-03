@@ -20,10 +20,17 @@ A modular, standalone mod for **Kingdom Come: Deliverance II** that spawns a cus
 - Dumb Dumb **never flees**, runs away, or panics regardless of how much damage he receives.
 
 ### 🎮 In-Game Interaction Prompts (E & V Keys)
+
 Looking at Dumb Dumb displays custom interactive prompts:
-- **Press `E` (`use`): "Change Armor Preset"** — Cycles Dumb Dumb's armor preset in real time.
-- **Hold `V` (`companion_bond`): "Make Hostile" / "Wait Here"** — Toggles Dumb Dumb between two operational modes:
-  - **Wait Mode (Neutral - Default):** Dumb Dumb stands completely still, sheathes weapon, and acts as a stationary target.
+
+- **Press `E` (`use`): "Talk"** — Opens an in-world dialog menu with quick-access options:
+  - **`E` → "Heal yourself"** — Heals Dumb Dumb to full health on demand.
+  - **`V` (hold) → "Become Immortal" / "Become Mortal"** — Toggle Dumb Dumb's invulnerability on or off during dialog.
+  - **`R` → "Change Equipment"** — Cycle to the next armor preset.
+  - **`F` → "End Dialog"** — Close the dialog menu and return to normal mode.
+
+- **Hold `V` (`companion_bond`): "Make Hostile" / "Wait Here"** — Toggles Dumb Dumb between two operational modes *(outside of dialog mode)*:
+  - **Wait Mode (Neutral - Default):** Dumb Dumb stands completely still, sheathes weapon, and acts as a stationary target. Auto-heals if health is low.
   - **Hostile Mode (Combat Practice):** Dumb Dumb draws weapon and engages Henry in melee combat for sparring practice. Holding `V` again instantly disengages combat (via watchdog loop in `combat_melee.xml`), sheathes weapon, clears target, and returns Dumb Dumb back to Wait mode.
 
 ### ⚔️ Curated Armor Presets
