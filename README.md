@@ -34,13 +34,22 @@ Cycles cleanly through 3 distinct armor tiers:
 
 ---
 
+## ⌨️ Keybindings & Hotkeys
+
+- **Default Spawn / Despawn Key:** `/` (Slash)
+  - Pressing `/` instantly spawns or despawns Dumb Dumb right in front of Henry.
+  - ActionMap mapping in `Libs/Config/defaultProfile.xml` and auto-bound on startup.
+
+---
+
 ## 💻 Console Commands
 
 Open the console in-game (`~`):
 
 | Command | Action |
 |---|---|
-| `dummy_spawn` *(or `dummy`)* | Toggle spawn / despawn of Dumb Dumb in front of Henry |
+| `dummy_spawn` *(or `dummy`)* | Toggle spawn / despawn of Dumb Dumb in front of Henry (bound to `/` by default) |
+| `dummy_bind <key>` | Rebind the spawn/despawn hotkey (e.g., `dummy_bind /` or `dummy_bind f6`) |
 | `dummy_next` | Cycle forward to the next armor preset |
 | `dummy_prev` | Cycle backward to the previous armor preset |
 | `dummy_hostile` | Toggle Dumb Dumb between Hostile (Combat) and Wait (Neutral) modes |

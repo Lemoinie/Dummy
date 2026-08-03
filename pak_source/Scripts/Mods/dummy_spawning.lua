@@ -7,6 +7,7 @@ DummySpawner = DummySpawner or {}
 DummySpawner.SPAWN_DISTANCE    = 2.0
 DummySpawner.ENTITY_CLASS      = "NPC"
 DummySpawner.LOG_PREFIX        = "[Dummy] "
+DummySpawner.KEYBIND_SPAWN     = "/"          -- default spawn/despawn hotkey
 
 -- Custom Dumb Dumb Soul GUID (dummyFaction, social_class_id=0, no reputation penalty)
 DummySpawner.SOUL_GUID         = "a1b2c3d4-0003-4000-8000-100000000003"
@@ -22,6 +23,17 @@ DummySpawner.isHostile         = false
 function DummySpawner:Log(msg)
     if System and System.LogAlways then
         System.LogAlways(self.LOG_PREFIX .. tostring(msg))
+    end
+end
+
+function DummySpawner:BindKey(key)
+    if key and key ~= "" then
+        self.KEYBIND_SPAWN = key
+    end
+    local keyToBind = self.KEYBIND_SPAWN or "/"
+    if System and System.ExecuteCommand then
+        System.ExecuteCommand("bind " .. keyToBind .. " dummy_spawn")
+        self:Log("Bound spawn/despawn hotkey to: " .. keyToBind)
     end
 end
 

@@ -16,12 +16,27 @@ DummySpawner.SPAWN_DISTANCE    = 2.0          -- metres in front of player
 DummySpawner.ENTITY_CLASS      = "NPC"        -- CryEngine entity class for human NPCs
 DummySpawner.ENTITY_NAME       = "DummyNPC"   -- unique name
 DummySpawner.LOG_PREFIX        = "[Dummy] "   -- log prefix
+DummySpawner.KEYBIND_SPAWN     = "/"          -- default spawn/despawn hotkey
 
 -------------------------------
 -- State
 -------------------------------
 DummySpawner.spawnedEntityId   = nil          -- entityId of active dummy
 DummySpawner.currentPresetIdx  = 1            -- active armor preset
+
+------------------------------------------------------------
+--  HELPERS
+------------------------------------------------------------
+function DummySpawner:BindKey(key)
+    if key and key ~= "" then
+        self.KEYBIND_SPAWN = key
+    end
+    local keyToBind = self.KEYBIND_SPAWN or "/"
+    if System and System.ExecuteCommand then
+        System.ExecuteCommand("bind " .. keyToBind .. " dummy_spawn")
+        self:Log("Bound spawn/despawn hotkey to: " .. keyToBind)
+    end
+end
 
 ------------------------------------------------------------
 --  ARMOR PRESETS  –  REAL KCD2 ITEM UUIDs
@@ -305,6 +320,21 @@ function dummy_prev()
     DummySpawner:PrevPreset()
 end
 
+function dummy_bind(key)
+    local kStr = tostring(key or "")
+    if kStr ~= "" and kStr ~= "nil" then
+        DummySpawner:BindKey(kStr)
+        if Game and Game.SendInfoText then
+            Game.SendInfoText("Dummy spawn hotkey bound to: " .. kStr, false, 0, 3)
+        end
+    else
+        if System and System.LogAlways then
+            System.LogAlways("[Dummy] Current spawn key: " .. tostring(DummySpawner.KEYBIND_SPAWN or "/"))
+            System.LogAlways("[Dummy] Usage: dummy_bind <key> (e.g. dummy_bind / or dummy_bind f6)")
+        end
+    end
+end
+
 ------------------------------------------------------------
 --  REGISTER CONSOLE COMMANDS
 ------------------------------------------------------------
@@ -313,9 +343,15 @@ if System and System.AddCCommand then
     System.AddCCommand("dummy",       "dummy_spawn()", "Toggle Dummy NPC spawn (short alias)")
     System.AddCCommand("dummy_next",  "dummy_next()",  "Cycle to next armor preset")
     System.AddCCommand("dummy_prev",  "dummy_prev()",  "Cycle to previous armor preset")
-    System.LogAlways("[Dummy] Console commands registered: dummy_spawn, dummy, dummy_next, dummy_prev")
+    System.AddCCommand("dummy_bind",  "dummy_bind(%1)", "Rebind spawn toggle hotkey (e.g. dummy_bind /)")
+    System.LogAlways("[Dummy] Console commands registered: dummy_spawn, dummy, dummy_next, dummy_prev, dummy_bind")
 else
     System.LogAlways("[Dummy] WARNING: System.AddCCommand not available at boot!")
+end
+
+-- Auto-bind default spawn hotkey on load (default '/')
+if DummySpawner and DummySpawner.BindKey then
+    DummySpawner:BindKey()
 end
 
 System.LogAlways("[Dummy] === DUMMY.LUA LOADED SUCCESSFULLY ===")
