@@ -102,23 +102,24 @@ function dummy_heal()
 end
 
 function dummy_immortal(enable)
+    local state = true
     if enable ~= nil and enable ~= "" then
         local str = tostring(enable):lower()
-        local state = (str == "1" or str == "true" or str == "on")
-        if DummySpawner then DummySpawner.isImmortal = state end
-        if DummySpawner and DummySpawner.spawnedEntityId then
-            local ent = System.GetEntity(DummySpawner.spawnedEntityId)
-            if ent and ent.actor then
-                pcall(function() ent.actor:SetInvulnerable(state) end)
-            end
-        end
-        local key = state and "ui_dummy_immortal_on" or "ui_dummy_immortal_off"
-        if Game and Game.SendInfoText then Game.SendInfoText(key, false, 0, 3) end
+        state = (str == "1" or str == "true" or str == "on")
     else
-        if DummyInteraction and DummyInteraction.ToggleImmortal then
-            DummyInteraction:ToggleImmortal()
+        state = not DummySpawner.isImmortal
+    end
+    
+    if DummySpawner then DummySpawner.isImmortal = state end
+    if DummySpawner and DummySpawner.spawnedEntityId then
+        local ent = System.GetEntity(DummySpawner.spawnedEntityId)
+        if ent and ent.actor then
+            pcall(function() ent.actor:SetInvulnerable(state) end)
         end
     end
+    
+    local key = state and "ui_dummy_immortal_on" or "ui_dummy_immortal_off"
+    if Game and Game.SendInfoText then Game.SendInfoText(key, false, 0, 3) end
 end
 
 function dummy_autoheal(enable)
@@ -183,8 +184,8 @@ if System and System.AddCCommand then
     System.AddCCommand("dummy_preset",   "dummy_preset('%1')",    "Set specific armor preset (dummy_preset 1/2/3)")
     System.AddCCommand("dummy_bind",     "dummy_bind('%1')",      "Rebind spawn toggle hotkey (e.g. dummy_bind /)")
     System.AddCCommand("dummy_heal",     "dummy_heal()",          "Heal Dumb Dumb to full health")
-    System.AddCCommand("dummy_immortal", "dummy_immortal('%1')",  "Toggle Dumb Dumb invulnerability (dummy_immortal 1 / 0)")
-    System.AddCCommand("dummy_autoheal", "dummy_autoheal('%1')",  "Toggle auto-healing in waiting mode (dummy_autoheal 1 / 0)")
+    System.AddCCommand("dummy_immortal", "dummy_immortal()",      "Toggle Dumb Dumb invulnerability")
+    System.AddCCommand("dummy_autoheal", "dummy_autoheal()",      "Toggle auto-healing in waiting mode")
     System.AddCCommand("dummy_status",   "dummy_status()",        "Display Dumb Dumb Mod status and command list")
     System.AddCCommand("dummy_info",     "dummy_info()",          "Display Dumb Dumb Mod status (alias)")
     System.AddCCommand("dummy_help",     "dummy_help()",          "Display Dumb Dumb Mod status (alias)")

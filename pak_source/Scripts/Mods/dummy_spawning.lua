@@ -42,11 +42,31 @@ function DummySpawner:FindSavedDummy()
     if self.spawnedEntityId and System.GetEntity(self.spawnedEntityId) then
         return true
     end
-    -- Try to find entity loaded from a save file
+    
     local existingEntity = System.GetEntityByName("DummyTarget_DumbDumb_Unique")
+    
+    -- Fallback: Search all NPCs for the unique soul GUID if name wasn't saved properly
+    if not existingEntity and System.GetEntitiesByClass then
+        local ents = System.GetEntitiesByClass(self.ENTITY_CLASS)
+        if ents then
+            for _, ent in pairs(ents) do
+                if ent.Properties and ent.Properties.guidSharedSoulId == self.SOUL_GUID then
+                    existingEntity = ent
+                    break
+                end
+            end
+        end
+    end
+
     if existingEntity then
         self.spawnedEntityId = existingEntity.id
         self:Log("Re-attached to existing Dumb Dumb from save.")
+        
+        -- Re-apply properties that might be lost during save/load
+        self:ApplyName(existingEntity)
+        self:ApplyFaction(existingEntity)
+        self:FreezeEntity(existingEntity)
+        
         if DummyInteraction and DummyInteraction.Inject then
             DummyInteraction:Inject(existingEntity)
         end
