@@ -81,6 +81,17 @@ if (Test-Path $skaldTableDir) {
     }
 }
 
+# --- UI Scaleform Flash files (minimap.gfx & UIElements XML) ---
+$uiDir = Join-Path $pakSource "libs\UI"
+if (Test-Path $uiDir) {
+    foreach ($f in Get-ChildItem $uiDir -Recurse) {
+        if (-not $f.PSIsContainer) {
+            $relPath = $f.FullName.Substring($pakSource.Length + 1).Replace("\", "/")
+            Add-FileToZip $zip $relPath $f.FullName
+        }
+    }
+}
+
 $zip.Dispose()
 Write-Host "  -> $dataPak"
 
