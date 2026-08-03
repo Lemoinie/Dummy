@@ -10,20 +10,9 @@
   <Row><Cell>ui_dummy_change_preset_light</Cell><Cell>Armor: Light</Cell><Cell>Armor: Light</Cell></Row>
   <Row><Cell>ui_dummy_change_preset_medium</Cell><Cell>Armor: Medium</Cell><Cell>Armor: Medium</Cell></Row>
   <Row><Cell>ui_dummy_change_preset_heavy</Cell><Cell>Armor: Heavy Full Plate</Cell><Cell>Armor: Heavy Full Plate</Cell></Row>
-
-  <!-- F3 Dedicated On-Screen HUD Menu Localization Keys -->
-  <Row><Cell>ui_dummy_menu_opened</Cell><Cell>Dumb Dumb Configurator [F3]</Cell><Cell>Dumb Dumb Configurator [F3]</Cell></Row>
-  <Row><Cell>ui_dummy_menu_closed_msg</Cell><Cell>Menu Closed.</Cell><Cell>Menu Closed.</Cell></Row>
-  <Row><Cell>ui_dummy_menu_opt1</Cell><Cell>Healed Dumb Dumb to 100% full health.</Cell><Cell>Healed Dumb Dumb to 100% full health.</Cell></Row>
-  <Row><Cell>ui_dummy_menu_opt2_on</Cell><Cell>Immortal Invulnerability: ENABLED</Cell><Cell>Immortal Invulnerability: ENABLED</Cell></Row>
-  <Row><Cell>ui_dummy_menu_opt2_off</Cell><Cell>Immortal Invulnerability: DISABLED</Cell><Cell>Immortal Invulnerability: DISABLED</Cell></Row>
-  <Row><Cell>ui_dummy_menu_opt3_on</Cell><Cell>Auto-Heal in Waiting: ENABLED</Cell><Cell>Auto-Heal in Waiting: ENABLED</Cell></Row>
-  <Row><Cell>ui_dummy_menu_opt3_off</Cell><Cell>Auto-Heal in Waiting: DISABLED</Cell><Cell>Auto-Heal in Waiting: DISABLED</Cell></Row>
-  <Row><Cell>ui_dummy_menu_opt4_1</Cell><Cell>Armor Preset 1 Applied: Light Armor</Cell><Cell>Armor Preset 1 Applied: Light Armor</Cell></Row>
-  <Row><Cell>ui_dummy_menu_opt4_2</Cell><Cell>Armor Preset 2 Applied: Medium Armor</Cell><Cell>Armor Preset 2 Applied: Medium Armor</Cell></Row>
-  <Row><Cell>ui_dummy_menu_opt4_3</Cell><Cell>Armor Preset 3 Applied: Heavy Full Plate Armor</Cell><Cell>Armor Preset 3 Applied: Heavy Full Plate Armor</Cell></Row>
-  <Row><Cell>ui_dummy_menu_opt5_hostile</Cell><Cell>Mode Changed: HOSTILE (Sparring Practice)</Cell><Cell>Mode Changed: HOSTILE (Sparring Practice)</Cell></Row>
-  <Row><Cell>ui_dummy_menu_opt5_wait</Cell><Cell>Mode Changed: WAIT (Stationary Target)</Cell><Cell>Mode Changed: WAIT (Stationary Target)</Cell></Row>
-  <Row><Cell>ui_dummy_menu_opt6_spawn</Cell><Cell>Dumb Dumb SPAWNED in front of Henry.</Cell><Cell>Dumb Dumb SPAWNED in front of Henry.</Cell></Row>
-  <Row><Cell>ui_dummy_menu_opt6_despawn</Cell><Cell>Dumb Dumb DESPAWNED.</Cell><Cell>Dumb Dumb DESPAWNED.</Cell></Row>
+  <Row><Cell>ui_dummy_healed</Cell><Cell>Healed Dumb Dumb to 100% full health.</Cell><Cell>Healed Dumb Dumb to 100% full health.</Cell></Row>
+  <Row><Cell>ui_dummy_immortal_on</Cell><Cell>Immortal Invulnerability: ENABLED</Cell><Cell>Immortal Invulnerability: ENABLED</Cell></Row>
+  <Row><Cell>ui_dummy_immortal_off</Cell><Cell>Immortal Invulnerability: DISABLED</Cell><Cell>Immortal Invulnerability: DISABLED</Cell></Row>
+  <Row><Cell>ui_dummy_autoheal_on</Cell><Cell>Auto-Heal in Waiting: ENABLED</Cell><Cell>Auto-Heal in Waiting: ENABLED</Cell></Row>
+  <Row><Cell>ui_dummy_autoheal_off</Cell><Cell>Auto-Heal in Waiting: DISABLED</Cell><Cell>Auto-Heal in Waiting: DISABLED</Cell></Row>
 </Table>

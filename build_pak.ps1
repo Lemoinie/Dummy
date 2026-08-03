@@ -1,4 +1,4 @@
-# build_pak.ps1 - Dummy Mod PAK Builder with Build Logging
+# build_pak.ps1 - Dummy Mod PAK Builder
 Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
@@ -101,18 +101,6 @@ if (Test-Path $skaldTableDir) {
     }
 }
 
-# --- UI Scaleform Flash files (minimap.gfx & UIElements XML) ---
-$uiDir = Join-Path $pakSource "libs\UI"
-if (Test-Path $uiDir) {
-    foreach ($f in Get-ChildItem $uiDir -Recurse) {
-        if (-not $f.PSIsContainer) {
-            $relPath = $f.FullName.Substring($pakSource.Length + 1).Replace("\", "/")
-            Add-FileToZip $zip $relPath $f.FullName
-            Write-Log "  + Added $relPath"
-        }
-    }
-}
-
 $zip.Dispose()
 Write-Log "  -> Data PAK Created: $dataPak" "Green"
 
@@ -143,25 +131,11 @@ try {
     Copy-Item (Join-Path $scriptDir "mod.manifest") -Destination (Join-Path $gameModDir "mod.manifest")  -Force -ErrorAction Stop
     Write-Log "  + Deployed PAKs and mod.manifest"
 
-    # Copy standalone dummy.cfg configuration file to mod folder and game Bin folder
+    # Copy standalone dummy.cfg configuration file to mod folder
     $cfgSrc = Join-Path $pakSource "Scripts\Mods\dummy.cfg"
-    $binDir = "C:\Games\Kingdom Come - Deliverance II\Bin\Win64MasterMasterSteamPGO"
     if (Test-Path $cfgSrc) {
         Copy-Item $cfgSrc -Destination (Join-Path $gameModDir "dummy.cfg") -Force -ErrorAction SilentlyContinue
-        if (Test-Path $binDir) {
-            Copy-Item $cfgSrc -Destination (Join-Path $binDir "dummy.cfg") -Force -ErrorAction SilentlyContinue
-            Write-Log "  + Deployed dummy.cfg to Bin folder ($binDir)"
-        }
-    }
-
-    # Copy DummyMod.asi to mod folder and game Bin folder
-    $asiSrc = Join-Path $scriptDir "DummyMod.asi"
-    if (Test-Path $asiSrc) {
-        Copy-Item $asiSrc -Destination (Join-Path $gameModDir "DummyMod.asi") -Force -ErrorAction SilentlyContinue
-        if (Test-Path $binDir) {
-            Copy-Item $asiSrc -Destination (Join-Path $binDir "DummyMod.asi") -Force -ErrorAction SilentlyContinue
-            Write-Log "  + Deployed DummyMod.asi to Bin folder ($binDir)"
-        }
+        Write-Log "  + Deployed dummy.cfg to mod folder ($gameModDir)"
     }
 
     Write-Log ""
