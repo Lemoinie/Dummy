@@ -1,5 +1,5 @@
 ------------------------------------------------------------
---  dummy_interaction.lua  –  Native Interaction Action Handling
+--  dummy_interaction.lua  –  Interaction Action Handling
 ------------------------------------------------------------
 
 DummyInteraction = DummyInteraction or {}
@@ -7,35 +7,42 @@ DummyInteraction = DummyInteraction or {}
 function DummyInteraction:Inject(entity)
     if not entity then return end
 
-    entity.DummyToggleHostile = function(selfEnt, user)
+    entity.DummyCyclePreset = function(self, user)
+        DummySpawner:NextPreset()
+    end
+
+    entity.DummyToggleHostile = function(self, user)
         DummySpawner:ToggleHostile()
     end
 
     entity.GetActions = function(selfEnt, userEnt, firstFast)
         local output = {}
 
+        -- Keep interaction active when NPC is not dead
         if selfEnt.actor and not selfEnt.actor:IsDead() then
+
             if AddInteractorAction then
-                -- 1. Native Talk prompt (E key) -> opens native Skald dialogue
+                -- 1. Action E: Change Armor Preset (Tap E)
                 AddInteractorAction(
                     output,
                     firstFast,
                     Action()
-                        :hint("@ui_hud_talk")
-                        :action("talk")
+                        :hint("ui_dummy_change_preset")  -- localization key
+                        :hintType(AHT_RELEASE)
+                        :action("use")
                         :uiOrder(1)
-                        :func(BasicAIActions.OnTalk)
-                        :interaction(inr_talk)
+                        :func(selfEnt.DummyCyclePreset)
+                        :interaction(inr_loot)
                 )
 
-                -- 2. Hold V -> Toggle Wait / Hostile
+                -- 2. Action V: Toggle Wait / Hostile (Hold V - companion_bond)
                 local hostileHint = DummySpawner.isHostile and "ui_dummy_make_wait" or "ui_dummy_make_hostile"
                 AddInteractorAction(
                     output,
                     firstFast,
                     Action()
                         :hint(hostileHint)
-                        :hintType(AHT_HOLD)
+                        :hintType(AHT_HOLD)  -- Key V (companion_bond) requires AHT_HOLD in KCD2 engine
                         :action("companion_bond")
                         :uiOrder(2)
                         :func(selfEnt.DummyToggleHostile)
@@ -45,35 +52,5 @@ function DummyInteraction:Inject(entity)
         end
 
         return output
-    end
-end
-
-function DummyInteraction:ToggleImmortal(entity)
-    entity = entity or System.GetEntity(DummySpawner.spawnedEntityId)
-    if not entity then return end
-
-    if DummySpawner.isImmortal == nil then DummySpawner.isImmortal = true end
-    DummySpawner.isImmortal = not DummySpawner.isImmortal
-    local immortal = DummySpawner.isImmortal
-
-    pcall(function()
-        if entity.SetInvulnerability then
-            entity:SetInvulnerability(immortal)
-        end
-        entity.invulnerable = immortal
-        if entity.Properties then
-            entity.Properties.bInvulnerable = immortal
-            if entity.Properties.Health then
-                entity.Properties.Health.bInvulnerable = immortal
-            end
-        end
-    end)
-
-    local statusKey = immortal and "ui_dummy_dlg_immortal_on" or "ui_dummy_dlg_immortal_off"
-    if Game and Game.SendInfoText then
-        Game.SendInfoText(statusKey, false, 0, 3)
-    end
-    if System and System.LogAlways then
-        System.LogAlways("[Dummy] Immortal mode: " .. tostring(immortal))
     end
 end

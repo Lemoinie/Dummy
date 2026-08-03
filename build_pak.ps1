@@ -81,24 +81,6 @@ if (Test-Path $skaldTableDir) {
     }
 }
 
-# --- Quest XMLs (Skald dialogue / quest trees) ---
-$questsDir = Join-Path $pakSource "quests"
-if (Test-Path $questsDir) {
-    foreach ($f in Get-ChildItem $questsDir -Recurse -Filter "*.xml") {
-        $relPath = $f.FullName.Substring($pakSource.Length + 1).Replace("\", "/")
-        Add-FileToZip $zip $relPath $f.FullName
-    }
-}
-
-# --- Storm rule XMLs (roles / appearance / equipment) ---
-$stormDir = Join-Path $pakSource "libs\Storm"
-if (Test-Path $stormDir) {
-    foreach ($f in Get-ChildItem $stormDir -Recurse -Filter "*.xml") {
-        $relPath = $f.FullName.Substring($pakSource.Length + 1).Replace("\", "/")
-        Add-FileToZip $zip $relPath $f.FullName
-    }
-}
-
 $zip.Dispose()
 Write-Host "  -> $dataPak"
 

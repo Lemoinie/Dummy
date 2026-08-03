@@ -19,13 +19,9 @@ A modular, standalone mod for **Kingdom Come: Deliverance II** that spawns a cus
 - **Suppressed Panic:** Enclosed within `<EntityContext context="crime_suppressBehavioralReaction">` and `<EntityContext context="crime_preventDespawn">`.
 - Dumb Dumb **never flees**, runs away, or panics regardless of how much damage he receives.
 
-### 🎮 In-Game Dialogue & Interaction Prompts
-Looking at Dumb Dumb displays interactive prompts:
-- **Press `E` (`talk`): "Talk"** — Opens the native in-game Skald dialogue screen with full camera cut-in and interactive options (no extra keybinds needed):
-  - **"Heal yourself"** — Restores Dumb Dumb to 100% full health immediately.
-  - **"Become immortal"** — Toggles Dumb Dumb's invulnerability on or off.
-  - **"Change equipments"** — Opens an armor preset dialogue sub-menu (Light Armor, Medium Armor, Heavy Full Plate Armor).
-  - **"(End Dialog)"** — Exits dialogue cleanly.
+### 🎮 In-Game Interaction Prompts (E & V Keys)
+Looking at Dumb Dumb displays custom interactive prompts:
+- **Press `E` (`use`): "Change Armor Preset"** — Cycles Dumb Dumb's armor preset in real time (Light → Medium → Heavy Full Plate).
 - **Hold `V` (`companion_bond`): "Make Hostile" / "Wait Here"** — Toggles Dumb Dumb between two operational modes:
   - **Wait Mode (Neutral - Default):** Dumb Dumb stands completely still, sheathes weapon, and acts as a stationary target.
   - **Hostile Mode (Combat Practice):** Dumb Dumb draws weapon and engages Henry in melee combat for sparring practice. Holding `V` again instantly disengages combat (via watchdog loop in `combat_melee.xml`), sheathes weapon, clears target, and returns Dumb Dumb back to Wait mode.
@@ -53,12 +49,14 @@ Open the console in-game (`~`):
 | Command | Action |
 |---|---|
 | `dummy_spawn` *(or `dummy`)* | Toggle spawn / despawn of Dumb Dumb in front of Henry (bound to `/` by default) |
-| `dummy_bind <key>` | Rebind the spawn/despawn hotkey (e.g., `dummy_bind /` or `dummy_bind f6`) |
-| `dummy_heal` | Heal Dumb Dumb back to full health immediately |
-| `dummy_autoheal [1/0]` | Toggle or set auto-healing in Waiting mode when health is low (default: ON) |
-| `dummy_next` | Cycle forward to the next armor preset |
-| `dummy_prev` | Cycle backward to the previous armor preset |
-| `dummy_hostile` | Toggle Dumb Dumb between Hostile (Combat) and Wait (Neutral) modes |
+| `dummy_next` | Cycle to next armor preset (also triggered by pressing `E` on target) |
+| `dummy_prev` | Cycle to previous armor preset |
+| `dummy_preset <1|2|3>` | Instantly set specific armor preset (1=Light, 2=Medium, 3=Heavy Full Plate) |
+| `dummy_heal` | Heal Dumb Dumb to 100% full health |
+| `dummy_immortal` | Toggle Dumb Dumb invulnerability on / off |
+| `dummy_autoheal` | Toggle auto-healing in waiting mode (`dummy_autoheal 1` or `dummy_autoheal 0`) |
+| `dummy_bind <key>` | Rebind spawn toggle hotkey (e.g. `dummy_bind /` or `dummy_bind f6`) |
+| `dummy_menu` *(or `dummy_help`)* | Display the full mod menu and list of commands |
 
 ---
 

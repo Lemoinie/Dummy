@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="us-ascii"?>
-<database xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="barbora" xsi:noNamespaceSchemaLocation="../database.xsd">
-	<roles>
-		<role role_id="a1b2c3d4-0005-4000-8000-100000000005" metarole_name="NPC" role_name="role_dummy" />
-	</roles>
-</database>
