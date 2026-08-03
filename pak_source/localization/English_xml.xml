@@ -10,11 +10,15 @@
   <Row><Cell>ui_dummy_change_preset_light</Cell><Cell>Armor: Light</Cell><Cell>Armor: Light</Cell></Row>
   <Row><Cell>ui_dummy_change_preset_medium</Cell><Cell>Armor: Medium</Cell><Cell>Armor: Medium</Cell></Row>
   <Row><Cell>ui_dummy_change_preset_heavy</Cell><Cell>Armor: Heavy Full Plate</Cell><Cell>Armor: Heavy Full Plate</Cell></Row>
-  <!-- Dialog menu localization keys -->
-  <Row><Cell>ui_dummy_talk</Cell><Cell>Talk</Cell><Cell>Talk</Cell></Row>
-  <Row><Cell>ui_dummy_dialog_heal</Cell><Cell>Heal yourself</Cell><Cell>Heal yourself</Cell></Row>
-  <Row><Cell>ui_dummy_dialog_make_immortal</Cell><Cell>Become Immortal</Cell><Cell>Become Immortal</Cell></Row>
-  <Row><Cell>ui_dummy_dialog_make_mortal</Cell><Cell>Become Mortal</Cell><Cell>Become Mortal</Cell></Row>
-  <Row><Cell>ui_dummy_dialog_change_equip</Cell><Cell>Change Equipment</Cell><Cell>Change Equipment</Cell></Row>
-  <Row><Cell>ui_dummy_dialog_end</Cell><Cell>End Dialog</Cell><Cell>End Dialog</Cell></Row>
+  <!-- Dialog menu keys -->
+  <Row><Cell>ui_dummy_dlg_talk</Cell><Cell>Talk</Cell><Cell>Talk</Cell></Row>
+  <Row><Cell>ui_dummy_dlg_heal</Cell><Cell>Heal yourself</Cell><Cell>Heal yourself</Cell></Row>
+  <Row><Cell>ui_dummy_dlg_heal_done</Cell><Cell>Dumb Dumb is fully healed.</Cell><Cell>Dumb Dumb is fully healed.</Cell></Row>
+  <Row><Cell>ui_dummy_dlg_immortal</Cell><Cell>Become Immortal</Cell><Cell>Become Immortal</Cell></Row>
+  <Row><Cell>ui_dummy_dlg_mortal</Cell><Cell>Disable Immortality</Cell><Cell>Disable Immortality</Cell></Row>
+  <Row><Cell>ui_dummy_dlg_immortal_on</Cell><Cell>Dumb Dumb is now Immortal.</Cell><Cell>Dumb Dumb is now Immortal.</Cell></Row>
+  <Row><Cell>ui_dummy_dlg_immortal_off</Cell><Cell>Dumb Dumb is no longer Immortal.</Cell><Cell>Dumb Dumb is no longer Immortal.</Cell></Row>
+  <Row><Cell>ui_dummy_dlg_equip</Cell><Cell>Change Equipment</Cell><Cell>Change Equipment</Cell></Row>
+  <Row><Cell>ui_dummy_dlg_end</Cell><Cell>End Dialog</Cell><Cell>End Dialog</Cell></Row>
+  <Row><Cell>ui_dummy_dlg_back</Cell><Cell>Back</Cell><Cell>Back</Cell></Row>
 </Table>

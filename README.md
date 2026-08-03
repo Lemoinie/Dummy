@@ -20,17 +20,14 @@ A modular, standalone mod for **Kingdom Come: Deliverance II** that spawns a cus
 - Dumb Dumb **never flees**, runs away, or panics regardless of how much damage he receives.
 
 ### 🎮 In-Game Interaction Prompts (E & V Keys)
-
 Looking at Dumb Dumb displays custom interactive prompts:
-
-- **Press `E` (`use`): "Talk"** — Opens an in-world dialog menu with quick-access options:
-  - **`E` → "Heal yourself"** — Heals Dumb Dumb to full health on demand.
-  - **`V` (hold) → "Become Immortal" / "Become Mortal"** — Toggle Dumb Dumb's invulnerability on or off during dialog.
-  - **`R` → "Change Equipment"** — Cycle to the next armor preset.
-  - **`F` → "End Dialog"** — Close the dialog menu and return to normal mode.
-
-- **Hold `V` (`companion_bond`): "Make Hostile" / "Wait Here"** — Toggles Dumb Dumb between two operational modes *(outside of dialog mode)*:
-  - **Wait Mode (Neutral - Default):** Dumb Dumb stands completely still, sheathes weapon, and acts as a stationary target. Auto-heals if health is low.
+- **Press `E` (`use`): "Talk"** — Opens a Lua-driven dialog menu with quality-of-life options. No console commands needed:
+  - **`E` → "Heal yourself"** — Restores Dumb Dumb to full health immediately.
+  - **Hold `V` → "Become Immortal" / "Disable Immortality"** — Toggles Dumb Dumb's invulnerability on or off.
+  - **`G` (loot key) → "Change Equipment"** — Opens an equipment sub-menu listing all 3 armor presets. Press `E` to apply the highlighted preset, or `V` to go back.
+  - **Talk key → "End Dialog"** — Closes the dialog menu and returns to the normal interaction prompt.
+- **Hold `V` (`companion_bond`): "Make Hostile" / "Wait Here"** — Toggles Dumb Dumb between two operational modes (only visible when menu is closed):
+  - **Wait Mode (Neutral - Default):** Dumb Dumb stands completely still, sheathes weapon, and acts as a stationary target.
   - **Hostile Mode (Combat Practice):** Dumb Dumb draws weapon and engages Henry in melee combat for sparring practice. Holding `V` again instantly disengages combat (via watchdog loop in `combat_melee.xml`), sheathes weapon, clears target, and returns Dumb Dumb back to Wait mode.
 
 ### ⚔️ Curated Armor Presets

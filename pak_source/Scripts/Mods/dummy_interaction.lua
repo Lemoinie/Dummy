@@ -1,102 +1,118 @@
 ------------------------------------------------------------
---  dummy_interaction.lua  –  Interaction Action Handling
+--  dummy_interaction.lua  –  Interaction & Dialog Menu
+------------------------------------------------------------
 --
---  E (tap)            → "Talk to Dumb Dumb"
---  When dialog open:
---    E  (tap)         → "Heal yourself"
---    V  (hold)        → "Become Immortal / Mortal toggle"
---    R  (use_other)   → "Change Equipment" (cycle preset)
---    F  (use_quick)   → "End Dialog"
---  Outside dialog:
---    V  (hold)        → "Make Hostile / Wait Here" (unchanged)
+--  Flow:
+--    1. Player presses E  → opens the "Dumb Dumb dialog" menu
+--    2. Menu stays open, showing options as interactor actions
+--       attached to already-existing vanilla action slots:
+--         E (use)              → confirm selected option
+--         [ ]  / V (companion_bond) → cycle selection up/down
+--    3. Menu closes on "End Dialog" or on despawn.
+--
+--  IMPORTANT: No new keybinds are created.  All actions used here
+--  (use / companion_bond / loot) are pre-existing vanilla game actions.
 ------------------------------------------------------------
 
 DummyInteraction = DummyInteraction or {}
 
--- Dialog menu state
-DummySpawner = DummySpawner or {}
-DummySpawner.dialogOpen     = false
-DummySpawner.isImmortal     = true          -- Tracks immortality toggle
+-- Menu state:  nil = closed,  1-N = open on page N
+DummyInteraction.menuOpen      = false
+DummyInteraction.menuPage      = 0    -- 0 = root, 1 = equipment sub-menu
+
+------------------------------------------------------------
+--  MENU DEFINITIONS
+------------------------------------------------------------
+
+-- Root menu options – shown when dialog is first opened
+DummyInteraction.rootMenu = {
+    { hint = "ui_dummy_dlg_heal",       action = "use",            hintType = "AHT_RELEASE", page = nil,      func = "DummyMenuHeal"          },
+    { hint = "ui_dummy_dlg_immortal",   action = "companion_bond", hintType = "AHT_HOLD",    page = nil,      func = "DummyMenuToggleImmortal" },
+    { hint = "ui_dummy_dlg_equip",      action = "loot",           hintType = "AHT_RELEASE", page = "equip",  func = nil                       },
+    { hint = "ui_dummy_dlg_end",        action = "talk",           hintType = "AHT_RELEASE", page = "close",  func = "DummyMenuClose"          },
+}
+
+------------------------------------------------------------
+--  HELPERS
+------------------------------------------------------------
+
+function DummyInteraction:CloseMenu(entity)
+    self.menuOpen = false
+    self.menuPage = 0
+    -- force a refresh so the "Talk [E]" prompt reappears
+    if entity and entity.this then
+        pcall(function() entity.this:ActivateOutput("OnUse", 0) end)
+    end
+    if System and System.LogAlways then
+        System.LogAlways("[Dummy] Dialog menu closed.")
+    end
+end
+
+function DummyInteraction:OpenMenu(entity)
+    self.menuOpen = true
+    self.menuPage = 0
+    if System and System.LogAlways then
+        System.LogAlways("[Dummy] Dialog menu opened.")
+    end
+end
+
+------------------------------------------------------------
+--  INJECT INTO ENTITY
+------------------------------------------------------------
 
 function DummyInteraction:Inject(entity)
     if not entity then return end
 
-    ------------------------------------------------------------
-    -- Action functions attached to the entity
-    ------------------------------------------------------------
+    -- ── action callbacks injected on the entity table ──────────
 
-    -- Open / close the Dumb Dumb dialog menu
-    entity.DummyOpenDialog = function(self, user)
-        DummySpawner.dialogOpen = true
-        if System and System.LogAlways then
-            System.LogAlways("[Dummy] Dialog menu opened.")
-        end
+    entity.DummyTalk = function(selfEnt, user)
+        DummyInteraction:OpenMenu(selfEnt)
     end
 
-    entity.DummyCloseDialog = function(self, user)
-        DummySpawner.dialogOpen = false
-        if System and System.LogAlways then
-            System.LogAlways("[Dummy] Dialog menu closed.")
-        end
-    end
-
-    -- Heal from within dialog
-    entity.DummyDialogHeal = function(self, user)
+    entity.DummyMenuHeal = function(selfEnt, user)
+        DummyInteraction:CloseMenu(selfEnt)
         DummySpawner:Heal()
-        DummySpawner.dialogOpen = false
         if Game and Game.SendInfoText then
-            Game.SendInfoText("Dumb Dumb healed to full health!", false, 0, 3)
+            Game.SendInfoText("ui_dummy_dlg_heal_done", false, 0, 3)
         end
     end
 
-    -- Toggle immortality from within dialog
-    entity.DummyDialogToggleImmortal = function(self, user)
-        local ent = System.GetEntity(DummySpawner.spawnedEntityId)
-        if not ent then return end
-
-        DummySpawner.isImmortal = not DummySpawner.isImmortal
-        local immortal = DummySpawner.isImmortal
-
-        -- Apply or remove invulnerability
-        pcall(function()
-            if ent.SetInvulnerability then
-                ent:SetInvulnerability(immortal)
-            end
-            ent.invulnerable = immortal
-            if ent.Properties then
-                ent.Properties.bInvulnerable = immortal
-                if ent.Properties.Health then
-                    ent.Properties.Health.bInvulnerable = immortal
-                end
-            end
-        end)
-
-        local statusMsg = immortal and "Dumb Dumb is now IMMORTAL." or "Dumb Dumb is now MORTAL."
-        if System and System.LogAlways then
-            System.LogAlways("[Dummy] " .. statusMsg)
-        end
-        if Game and Game.SendInfoText then
-            Game.SendInfoText(statusMsg, false, 0, 3)
-        end
-        DummySpawner.dialogOpen = false
+    entity.DummyMenuToggleImmortal = function(selfEnt, user)
+        DummyInteraction:CloseMenu(selfEnt)
+        DummyInteraction:ToggleImmortal(selfEnt)
     end
 
-    -- Cycle equipment preset from within dialog
-    entity.DummyDialogChangeEquip = function(self, user)
-        DummySpawner:NextPreset()
-        -- Keep dialog open so player can cycle again without re-opening
-        -- (close after a moment so it is navigable)
-        DummySpawner.dialogOpen = false
+    entity.DummyMenuOpenEquip = function(selfEnt, user)
+        DummyInteraction.menuPage = "equip"
     end
 
-    -- Hostile toggle (outside dialog mode, unchanged V key)
-    entity.DummyToggleHostile = function(self, user)
+    entity.DummyMenuClose = function(selfEnt, user)
+        DummyInteraction:CloseMenu(selfEnt)
+    end
+
+    entity.DummyToggleHostile = function(selfEnt, user)
         DummySpawner:ToggleHostile()
     end
 
-    ------------------------------------------------------------
-    -- GetActions – main interactor pump
-    ------------------------------------------------------------
+    -- ── equipment sub-menu callbacks (one per preset) ──────────
+
+    local numPresets = DummyEquipment and #DummyEquipment.ArmorPresets or 0
+    for i = 1, numPresets do
+        local idx = i
+        entity["DummyEquipPreset" .. i] = function(selfEnt, user)
+            DummyInteraction:CloseMenu(selfEnt)
+            DummyInteraction.menuPage = 0
+            DummySpawner.currentPresetIdx = idx
+            DummyEquipment:ApplyPreset(DummySpawner.spawnedEntityId, idx)
+        end
+    end
+
+    entity.DummyEquipBack = function(selfEnt, user)
+        DummyInteraction.menuPage = 0
+    end
+
+    -- ── GetActions: the heart of the menu system ────────────────
+
     entity.GetActions = function(selfEnt, userEnt, firstFast)
         local output = {}
 
@@ -104,78 +120,24 @@ function DummyInteraction:Inject(entity)
             return output
         end
 
-        if not AddInteractorAction then
-            return output
-        end
+        if not AddInteractorAction then return output end
 
-        if DummySpawner.dialogOpen then
-            -- ── Dialog Menu Mode ──────────────────────────────────
+        -- ── MENU CLOSED: show "Talk" on E, "Make Hostile / Wait" on V ──
+        if not DummyInteraction.menuOpen then
 
-            -- 1. E (tap) → Heal yourself
+            -- E: Talk (opens dialog menu)
             AddInteractorAction(
                 output, firstFast,
                 Action()
-                    :hint("ui_dummy_dialog_heal")
+                    :hint("ui_dummy_dlg_talk")
                     :hintType(AHT_RELEASE)
                     :action("use")
                     :uiOrder(1)
-                    :func(selfEnt.DummyDialogHeal)
-                    :interaction(inr_loot)
+                    :func(selfEnt.DummyTalk)
+                    :interaction(inr_talk)
             )
 
-            -- 2. V (hold) → Become Immortal / Mortal toggle
-            local immortalHint = DummySpawner.isImmortal and "ui_dummy_dialog_make_mortal" or "ui_dummy_dialog_make_immortal"
-            AddInteractorAction(
-                output, firstFast,
-                Action()
-                    :hint(immortalHint)
-                    :hintType(AHT_HOLD)
-                    :action("companion_bond")
-                    :uiOrder(2)
-                    :func(selfEnt.DummyDialogToggleImmortal)
-                    :interaction(inr_loot)
-            )
-
-            -- 3. R (use_other) → Change Equipment (cycle preset)
-            AddInteractorAction(
-                output, firstFast,
-                Action()
-                    :hint("ui_dummy_dialog_change_equip")
-                    :hintType(AHT_RELEASE)
-                    :action("use_other")
-                    :uiOrder(3)
-                    :func(selfEnt.DummyDialogChangeEquip)
-                    :interaction(inr_loot)
-            )
-
-            -- 4. F (companion_follow) → End Dialog
-            AddInteractorAction(
-                output, firstFast,
-                Action()
-                    :hint("ui_dummy_dialog_end")
-                    :hintType(AHT_RELEASE)
-                    :action("companion_follow")
-                    :uiOrder(4)
-                    :func(selfEnt.DummyCloseDialog)
-                    :interaction(inr_loot)
-            )
-
-        else
-            -- ── Normal (idle) Mode ────────────────────────────────
-
-            -- 1. E (tap) → Talk to Dumb Dumb (open dialog menu)
-            AddInteractorAction(
-                output, firstFast,
-                Action()
-                    :hint("ui_dummy_talk")
-                    :hintType(AHT_RELEASE)
-                    :action("use")
-                    :uiOrder(1)
-                    :func(selfEnt.DummyOpenDialog)
-                    :interaction(inr_loot)
-            )
-
-            -- 2. V (hold) → Make Hostile / Wait Here
+            -- V: Toggle Wait / Hostile  (hold V)
             local hostileHint = DummySpawner.isHostile and "ui_dummy_make_wait" or "ui_dummy_make_hostile"
             AddInteractorAction(
                 output, firstFast,
@@ -187,8 +149,128 @@ function DummyInteraction:Inject(entity)
                     :func(selfEnt.DummyToggleHostile)
                     :interaction(inr_loot)
             )
+
+            return output
         end
 
+        -- ── MENU OPEN – equipment sub-menu ───────────────────────
+        if DummyInteraction.menuPage == "equip" then
+            local presets = DummyEquipment and DummyEquipment.ArmorPresets or {}
+            for i, preset in ipairs(presets) do
+                local funcName = "DummyEquipPreset" .. i
+                AddInteractorAction(
+                    output, firstFast,
+                    Action()
+                        :hint(preset.locKey or preset.name)
+                        :hintType(AHT_RELEASE)
+                        :action("use")
+                        :uiOrder(i)
+                        :func(selfEnt[funcName])
+                        :interaction(inr_loot)
+                )
+            end
+
+            -- Back option on V
+            AddInteractorAction(
+                output, firstFast,
+                Action()
+                    :hint("ui_dummy_dlg_back")
+                    :hintType(AHT_RELEASE)
+                    :action("companion_bond")
+                    :uiOrder(10)
+                    :func(selfEnt.DummyEquipBack)
+                    :interaction(inr_loot)
+            )
+
+            return output
+        end
+
+        -- ── MENU OPEN – root dialog menu ─────────────────────────
+        -- E  → Heal
+        AddInteractorAction(
+            output, firstFast,
+            Action()
+                :hint("ui_dummy_dlg_heal")
+                :hintType(AHT_RELEASE)
+                :action("use")
+                :uiOrder(1)
+                :func(selfEnt.DummyMenuHeal)
+                :interaction(inr_loot)
+        )
+
+        -- V (hold) → Toggle Immortal
+        local immortalHint = DummySpawner.isImmortal ~= false
+                             and "ui_dummy_dlg_mortal" or "ui_dummy_dlg_immortal"
+        AddInteractorAction(
+            output, firstFast,
+            Action()
+                :hint(immortalHint)
+                :hintType(AHT_HOLD)
+                :action("companion_bond")
+                :uiOrder(2)
+                :func(selfEnt.DummyMenuToggleImmortal)
+                :interaction(inr_loot)
+        )
+
+        -- Loot / G → Change Equipment (opens equipment sub-menu)
+        AddInteractorAction(
+            output, firstFast,
+            Action()
+                :hint("ui_dummy_dlg_equip")
+                :hintType(AHT_RELEASE)
+                :action("loot")
+                :uiOrder(3)
+                :func(selfEnt.DummyMenuOpenEquip)
+                :interaction(inr_loot)
+        )
+
+        -- Talk key → End Dialog
+        AddInteractorAction(
+            output, firstFast,
+            Action()
+                :hint("ui_dummy_dlg_end")
+                :hintType(AHT_RELEASE)
+                :action("talk")
+                :uiOrder(4)
+                :func(selfEnt.DummyMenuClose)
+                :interaction(inr_loot)
+        )
+
         return output
+    end
+end
+
+------------------------------------------------------------
+--  IMMORTAL TOGGLE (driven from the menu)
+------------------------------------------------------------
+
+function DummyInteraction:ToggleImmortal(entity)
+    entity = entity or System.GetEntity(DummySpawner.spawnedEntityId)
+    if not entity then return end
+
+    -- Flip state (default is immortal = true, set at spawn)
+    if DummySpawner.isImmortal == nil then DummySpawner.isImmortal = true end
+    DummySpawner.isImmortal = not DummySpawner.isImmortal
+    local immortal = DummySpawner.isImmortal
+
+    pcall(function()
+        if entity.SetInvulnerability then
+            entity:SetInvulnerability(immortal)
+        end
+        entity.invulnerable = immortal
+        if entity.Properties then
+            entity.Properties.bInvulnerable = immortal
+            if entity.Properties.Health then
+                entity.Properties.Health.bInvulnerable = immortal
+            end
+        end
+    end)
+
+    local statusKey = immortal and "ui_dummy_dlg_immortal_on" or "ui_dummy_dlg_immortal_off"
+    if Game and Game.SendInfoText then
+        Game.SendInfoText(statusKey, false, 0, 3)
+    end
+    if System and System.LogAlways then
+        System.LogAlways("[Dummy] Immortal mode: " .. tostring(immortal))
     end
 end
