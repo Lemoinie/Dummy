@@ -105,9 +105,13 @@ $gameLoc  = Join-Path $gameModDir "localization"
 if (-not (Test-Path $gameData)) { New-Item -ItemType Directory -Path $gameData | Out-Null }
 if (-not (Test-Path $gameLoc))  { New-Item -ItemType Directory -Path $gameLoc  | Out-Null }
 
-Copy-Item $dataPak                              -Destination (Join-Path $gameData "dummy.pak")       -Force
-Copy-Item $locPak                               -Destination (Join-Path $gameLoc  "English_xml.pak") -Force
-Copy-Item (Join-Path $scriptDir "mod.manifest") -Destination (Join-Path $gameModDir "mod.manifest")  -Force
-
-Write-Host ""
-Write-Host "SUCCESS: Built and installed to $gameModDir!" -ForegroundColor Green
+try {
+    Copy-Item $dataPak                              -Destination (Join-Path $gameData "dummy.pak")       -Force -ErrorAction Stop
+    Copy-Item $locPak                               -Destination (Join-Path $gameLoc  "English_xml.pak") -Force -ErrorAction Stop
+    Copy-Item (Join-Path $scriptDir "mod.manifest") -Destination (Join-Path $gameModDir "mod.manifest")  -Force -ErrorAction Stop
+    Write-Host ""
+    Write-Host "SUCCESS: Built and installed to $gameModDir!" -ForegroundColor Green
+} catch {
+    Write-Host ""
+    Write-Host "WARNING: Game is currently running (KingdomCome.exe). Close game to replace active pak files!" -ForegroundColor Yellow
+}

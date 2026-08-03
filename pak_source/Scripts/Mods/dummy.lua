@@ -94,10 +94,8 @@ function dummy_menu()
     local immortalState = (DummySpawner.isImmortal ~= false) and "ON" or "OFF"
     local isSpawned = DummySpawner.spawnedEntityId and "SPAWNED" or "DESPAWNED"
 
-    local infoMsg = "Dumb Dumb Configurator (F3) | Status: " .. isSpawned .. " | Mode: " .. hostileState .. " | Armor: " .. curPreset .. " | Immortal: " .. immortalState
-
     if Game and Game.SendInfoText then
-        Game.SendInfoText(infoMsg, false, 0, 5)
+        Game.SendInfoText("ui_dummy_menu_banner", false, 0, 4)
     end
     if System and System.LogAlways then
         System.LogAlways("[Dummy] ================= DUMB DUMB CONFIGURATOR (F3) =================")
