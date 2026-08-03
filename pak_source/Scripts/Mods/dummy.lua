@@ -82,26 +82,33 @@ function dummy_autoheal(enable)
     end
 end
 
+DummyConfigMenu = DummyConfigMenu or { isOpen = false }
+
 function dummy_menu()
-    if System and System.LogAlways then
-        System.LogAlways("[Dummy] ================= DUMB DUMB MOD MENU =================")
-        System.LogAlways("[Dummy]  Hotkeys:")
-        System.LogAlways("[Dummy]    [" .. tostring(DummySpawner.KEYBIND_SPAWN or "/") .. "]        - Spawn / Despawn Dumb Dumb")
-        System.LogAlways("[Dummy]    E          - Tap E on Dumb Dumb to cycle armor presets")
-        System.LogAlways("[Dummy]    Hold V     - Hold V on Dumb Dumb to toggle Hostile / Wait mode")
-        System.LogAlways("[Dummy]  Console Commands:")
-        System.LogAlways("[Dummy]    dummy_spawn      - Toggle spawn/despawn")
-        System.LogAlways("[Dummy]    dummy_next       - Cycle to next armor preset")
-        System.LogAlways("[Dummy]    dummy_prev       - Cycle to previous armor preset")
-        System.LogAlways("[Dummy]    dummy_preset <N> - Set preset (1=Light, 2=Medium, 3=Heavy)")
-        System.LogAlways("[Dummy]    dummy_heal       - Heal Dumb Dumb to 100% full health")
-        System.LogAlways("[Dummy]    dummy_immortal   - Toggle immortality on / off")
-        System.LogAlways("[Dummy]    dummy_autoheal   - Toggle auto-healing in waiting mode")
-        System.LogAlways("[Dummy]    dummy_bind <key> - Rebind spawn key (e.g. dummy_bind /)")
-        System.LogAlways("[Dummy] ========================================================")
-    end
+    DummyConfigMenu.isOpen = not DummyConfigMenu.isOpen
+    
+    local presetNames = { "1: Light", "2: Medium", "3: Heavy Full Plate" }
+    local curPreset = presetNames[DummySpawner.currentPresetIdx or 1] or "1: Light"
+    local hostileState = DummySpawner.isHostile and "HOSTILE (Sparring)" or "WAIT (Neutral)"
+    local autoHealState = DummySpawner.autoHealWaiting and "ON" or "OFF"
+    local immortalState = (DummySpawner.isImmortal ~= false) and "ON" or "OFF"
+    local isSpawned = DummySpawner.spawnedEntityId and "SPAWNED" or "DESPAWNED"
+
+    local infoMsg = "Dumb Dumb Configurator (F3) | Status: " .. isSpawned .. " | Mode: " .. hostileState .. " | Armor: " .. curPreset .. " | Immortal: " .. immortalState
+
     if Game and Game.SendInfoText then
-        Game.SendInfoText("Dummy Mod: Press ~ for console menu (dummy_menu)", false, 0, 4)
+        Game.SendInfoText(infoMsg, false, 0, 5)
+    end
+    if System and System.LogAlways then
+        System.LogAlways("[Dummy] ================= DUMB DUMB CONFIGURATOR (F3) =================")
+        System.LogAlways("[Dummy]  Status:    " .. isSpawned)
+        System.LogAlways("[Dummy]  Mode:      " .. hostileState)
+        System.LogAlways("[Dummy]  Armor:     " .. curPreset)
+        System.LogAlways("[Dummy]  Immortal:  " .. immortalState)
+        System.LogAlways("[Dummy]  Auto-Heal: " .. autoHealState)
+        System.LogAlways("[Dummy]  Hotkeys:   [/] = Spawn | E = Next Armor | Hold V = Hostile | F3 = Toggle Menu")
+        System.LogAlways("[Dummy]  Commands:  dummy_heal, dummy_immortal, dummy_preset <1-3>, dummy_autoheal, dummy_bind <key>")
+        System.LogAlways("[Dummy] ===================================================================")
     end
 end
 

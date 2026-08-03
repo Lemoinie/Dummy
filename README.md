@@ -39,6 +39,8 @@ Cycles cleanly through 3 distinct armor tiers:
 - **Default Spawn / Despawn Key:** `/` (Slash)
   - Pressing `/` instantly spawns or despawns Dumb Dumb right in front of Henry.
   - ActionMap mapping in `Libs/Config/defaultProfile.xml` and auto-bound on startup.
+- **Configuration Menu Key:** `F3`
+  - Pressing `F3` toggles the in-game Configuration Panel overlay, showing active status, mode, armor tier, invulnerability, and command shortcuts.
 
 ---
 

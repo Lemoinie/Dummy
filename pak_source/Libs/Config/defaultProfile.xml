@@ -11,10 +11,15 @@
 -->
 <ActionMaps>
     <ActionMap name="dummy_spawner">
-        <!-- Spawn / despawn toggle -->
+        <!-- Spawn / despawn toggle (Default: /) -->
         <action name="dummy_spawn_toggle"
                 onPress="1"
                 keyboard="/" />
+
+        <!-- Open / toggle Configuration Menu (Default: F3) -->
+        <action name="dummy_menu_toggle"
+                onPress="1"
+                keyboard="f3" />
 
         <!-- Cycle armor preset forward -->
         <action name="dummy_preset_next"
