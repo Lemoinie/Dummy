@@ -116,6 +116,16 @@ try {
         Copy-Item $cfgSrc -Destination (Join-Path $gameModDir "dummy.cfg") -Force -ErrorAction SilentlyContinue
     }
 
+    # Copy DummyMod.asi to mod folder and game Bin folder
+    $asiSrc = Join-Path $scriptDir "DummyMod.asi"
+    if (Test-Path $asiSrc) {
+        Copy-Item $asiSrc -Destination (Join-Path $gameModDir "DummyMod.asi") -Force -ErrorAction SilentlyContinue
+        $binDir = "C:\Games\Kingdom Come - Deliverance II\Bin\Win64MasterMasterSteamPGO"
+        if (Test-Path $binDir) {
+            Copy-Item $asiSrc -Destination (Join-Path $binDir "DummyMod.asi") -Force -ErrorAction SilentlyContinue
+        }
+    }
+
     Write-Host ""
     Write-Host "SUCCESS: Built and installed to $gameModDir!" -ForegroundColor Green
 } catch {
