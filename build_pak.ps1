@@ -110,14 +110,10 @@ try {
     Copy-Item $locPak                               -Destination (Join-Path $gameLoc  "English_xml.pak") -Force -ErrorAction Stop
     Copy-Item (Join-Path $scriptDir "mod.manifest") -Destination (Join-Path $gameModDir "mod.manifest")  -Force -ErrorAction Stop
     
-    # Copy native companion version.dll to mod folder and game Bin folder
-    $dllSrc = Join-Path $scriptDir "version.dll"
-    if (Test-Path $dllSrc) {
-        Copy-Item $dllSrc -Destination (Join-Path $gameModDir "version.dll") -Force -ErrorAction SilentlyContinue
-        $binDir = "C:\Games\Kingdom Come - Deliverance II\Bin\Win64MasterMasterSteamPGO"
-        if (Test-Path $binDir) {
-            Copy-Item $dllSrc -Destination (Join-Path $binDir "version.dll") -Force -ErrorAction SilentlyContinue
-        }
+    # Copy standalone dummy.cfg configuration file
+    $cfgSrc = Join-Path $pakSource "Scripts\Mods\dummy.cfg"
+    if (Test-Path $cfgSrc) {
+        Copy-Item $cfgSrc -Destination (Join-Path $gameModDir "dummy.cfg") -Force -ErrorAction SilentlyContinue
     }
 
     Write-Host ""

@@ -38,24 +38,32 @@ Cycles cleanly through 3 distinct armor tiers:
 
 - **Default Spawn / Despawn Key:** `/` (Slash)
   - Pressing `/` instantly spawns or despawns Dumb Dumb right in front of Henry.
-  - ActionMap mapping in `Libs/Config/defaultProfile.xml` and auto-bound on startup.
-- **On-Screen Menu Key:** `F3`
-  - Pressing `F3` opens the native on-screen companion menu panel (powered by `version.dll`).
+  - ActionMap mapping in `Libs/Config/defaultProfile.xml` and configurable via `dummy.cfg`.
+- **Status Overview Key:** `F3`
+  - Pressing `F3` displays full mod status, current armor tier, invulnerability state, and command list.
 
 ---
 
-## 📦 Installation & Companion DLL (`version.dll`)
+## ⚙️ Independent Configuration (`dummy.cfg`)
+
+This mod is 100% standalone and uses its own configuration file `dummy.cfg` located in the mod folder (`mods/Dummy/dummy.cfg`):
+
+```ini
+[Settings]
+spawnKey=/
+menuKey=F3
+isImmortal=1
+autoHealWaiting=1
+defaultPreset=1
+```
+
+---
+
+## 📦 Installation
 
 1. Extract the mod package into your Kingdom Come II `mods` directory:
    `C:\Games\Kingdom Come - Deliverance II\mods\Dummy`
-2. **On-Screen Menu DLL (`version.dll`):**
-   Copy `version.dll` from the mod directory into your game's binary executable directory:
-   - **Steam:** `<game>\Bin\Win64MasterMasterSteamPGO\version.dll`
-   - **GOG:** `<game>\Bin\Win64MasterMasterGogPGO\version.dll`
-   - **Game Pass:** `<game>\Bin\Win64MasterMasterGDKPGO\version.dll`
-   - **Epic:** `<game>\Bin\Win64MasterMasterEpicPGO\version.dll`
-
-*`version.dll` is the native C++ loader companion that hooks into KCD2 to render the visual on-screen configuration panel when pressing `F3`.*
+2. Launch the game and press `/` to spawn Dumb Dumb!
 
 ---
 

@@ -1,15 +1,51 @@
 ------------------------------------------------------------
---  dummy.lua  –  Dummy Mod Entry Point & Native Panel Integration
+--  dummy.lua  –  Dummy Mod Standalone Main Entry Point & Config
 ------------------------------------------------------------
 
 if System and System.LogAlways then
-    System.LogAlways("[Dummy] === LOADING DUMMY.LUA ===")
+    System.LogAlways("[Dummy] === LOADING DUMMY.LUA (STANDALONE) ===")
 end
 
--- Force panel companion key to F3
-_G.minimap_ui_key = "F3"
+-- Configuration Defaults
+DummyConfig = DummyConfig or {
+    spawnKey = "/",
+    menuKey = "F3",
+    isImmortal = true,
+    autoHealWaiting = true,
+    defaultPreset = 1
+}
 
--- Global Wrapper Functions for Console Commands
+-- Load configuration from dummy.cfg if available
+function Dummy_LoadConfig()
+    pcall(function()
+        local f = io.open("mods/Dummy/dummy.cfg", "r") or io.open("dummy.cfg", "r")
+        if f then
+            for line in f:lines() do
+                local k, v = line:match("^%s*([%w_]+)%s*=%s*(.-)%s*$")
+                if k and v then
+                    if k == "spawnKey" then DummyConfig.spawnKey = v
+                    elseif k == "menuKey" then DummyConfig.menuKey = v
+                    elseif k == "isImmortal" then DummyConfig.isImmortal = (v == "1" or v:lower() == "true")
+                    elseif k == "autoHealWaiting" then DummyConfig.autoHealWaiting = (v == "1" or v:lower() == "true")
+                    elseif k == "defaultPreset" then DummyConfig.defaultPreset = tonumber(v) or 1
+                    end
+                end
+            end
+            f:close()
+        end
+    end)
+
+    if DummySpawner then
+        DummySpawner.KEYBIND_SPAWN = DummyConfig.spawnKey or "/"
+        DummySpawner.isImmortal = DummyConfig.isImmortal
+        DummySpawner.autoHealWaiting = DummyConfig.autoHealWaiting
+        DummySpawner.currentPresetIdx = DummyConfig.defaultPreset or 1
+    end
+end
+
+Dummy_LoadConfig()
+
+-- Global Wrapper Functions for Commands
 function dummy_spawn() DummySpawner:Toggle() end
 function dummy_next()  DummySpawner:NextPreset() end
 function dummy_prev()  DummySpawner:PrevPreset() end
@@ -22,9 +58,14 @@ function dummy_preset(idx)
         if DummySpawner.spawnedEntityId then
             DummyEquipment:ApplyPreset(DummySpawner.spawnedEntityId, num)
         end
-        local keys = { "ui_dummy_menu_opt4_1", "ui_dummy_menu_opt4_2", "ui_dummy_menu_opt4_3" }
-        if Game and Game.SendInfoText and keys[num] then
-            Game.SendInfoText(keys[num], false, 0, 3)
+        local names = { "Light Armor", "Medium Armor", "Heavy Full Plate Armor" }
+        if Game and Game.SendInfoText then
+            Game.SendInfoText("Applied Armor Preset " .. num .. ": " .. (names[num] or ""), false, 0, 3)
+        end
+    else
+        if System and System.LogAlways then
+            System.LogAlways("[Dummy] Usage: dummy_preset <1|2|3>")
+            System.LogAlways("[Dummy]   1 = Light Armor, 2 = Medium Armor, 3 = Heavy Full Plate")
         end
     end
 end
@@ -35,6 +76,11 @@ function dummy_bind(key)
         DummySpawner:BindKey(kStr)
         if Game and Game.SendInfoText then
             Game.SendInfoText("Dummy spawn hotkey bound to: " .. kStr, false, 0, 3)
+        end
+    else
+        if System and System.LogAlways then
+            System.LogAlways("[Dummy] Current spawn key: " .. tostring(DummySpawner.KEYBIND_SPAWN or "/"))
+            System.LogAlways("[Dummy] Usage: dummy_bind <key> (e.g. dummy_bind / or dummy_bind f6)")
         end
     end
 end
@@ -48,9 +94,23 @@ function dummy_heal()
     end
 end
 
-function dummy_immortal()
-    if DummyInteraction and DummyInteraction.ToggleImmortal then
-        DummyInteraction:ToggleImmortal()
+function dummy_immortal(enable)
+    if enable ~= nil and enable ~= "" then
+        local str = tostring(enable):lower()
+        local state = (str == "1" or str == "true" or str == "on")
+        if DummySpawner then DummySpawner.isImmortal = state end
+        if DummySpawner.spawnedEntityId then
+            local ent = System.GetEntity(DummySpawner.spawnedEntityId)
+            if ent and ent.actor then
+                pcall(function() ent.actor:SetInvulnerable(state) end)
+            end
+        end
+        local key = state and "ui_dummy_menu_opt2_on" or "ui_dummy_menu_opt2_off"
+        if Game and Game.SendInfoText then Game.SendInfoText(key, false, 0, 3) end
+    else
+        if DummyInteraction and DummyInteraction.ToggleImmortal then
+            DummyInteraction:ToggleImmortal()
+        end
     end
 end
 
@@ -68,107 +128,39 @@ function dummy_autoheal(enable)
     end
 end
 
-------------------------------------------------------------
---  MINIMAP COMPANION MENU PANEL (version.dll / KCD2Minimap.asi) INTEGRATION
-------------------------------------------------------------
-
-function Dummy_InjectMinimapMenu()
-    _G.minimap = _G.minimap or {}
-    local M = _G.minimap
-    M.ui = M.ui or { open = false, menu = "main", sel = 1, stack = {} }
-    M.menus = M.menus or {}
-
-    local onoff = function(v) return v and "ON" or "OFF" end
-    local dummyMenu = {
-        { label = "< Back", back = true, desc = "Return to parent menu." },
-        {
-            label = "Spawn / Despawn",
-            get = function() return DummySpawner.spawnedEntityId and "SPAWNED" or "DESPAWNED" end,
-            change = function() DummySpawner:Toggle() end,
-            desc = "Spawn or despawn Dumb Dumb NPC right in front of Henry."
-        },
-        {
-            label = "Heal Dumb Dumb",
-            action = function() DummySpawner:Heal() end,
-            desc = "Restore Dumb Dumb to 100% full health."
-        },
-        {
-            label = "Immortal Mode",
-            get = function() return onoff(DummySpawner.isImmortal ~= false) end,
-            change = function() if DummyInteraction and DummyInteraction.ToggleImmortal then DummyInteraction:ToggleImmortal() end end,
-            desc = "Toggle Dumb Dumb invulnerability on or off."
-        },
-        {
-            label = "Auto-Heal (Wait)",
-            get = function() return onoff(DummySpawner.autoHealWaiting) end,
-            change = function() dummy_autoheal() end,
-            desc = "Auto-heal Dumb Dumb when health is low in waiting mode."
-        },
-        {
-            label = "Armor Preset",
-            get = function()
-                local names = { "Light", "Medium", "Heavy Full Plate" }
-                return names[DummySpawner.currentPresetIdx or 1] or "Light"
-            end,
-            change = function(dir)
-                if dir and dir < 0 then DummySpawner:PrevPreset() else DummySpawner:NextPreset() end
-            end,
-            desc = "Cycle Dumb Dumb's armor preset (Light / Medium / Heavy Full Plate)."
-        },
-        {
-            label = "Hostile Mode",
-            get = function() return DummySpawner.isHostile and "Hostile (Sparring)" or "Wait (Neutral)" end,
-            change = function() DummySpawner:ToggleHostile() end,
-            desc = "Toggle between stationary target (Wait) and sparring practice (Hostile)."
-        }
-    }
-
-    M.menus.dummy = dummyMenu
-
-    if M.menus.main then
-        local exists = false
-        for _, item in ipairs(M.menus.main) do
-            if item.goto_ == "dummy" then
-                exists = true
-                break
-            end
-        end
-        if not exists then
-            table.insert(M.menus.main, 1, {
-                label = "Dumb Dumb Mod",
-                goto_ = "dummy",
-                desc = "Configure Dumb Dumb NPC spawning, healing, immortality, and armor presets."
-            })
-        end
-    else
-        M.menus.main = {
-            {
-                label = "Dumb Dumb Mod",
-                goto_ = "dummy",
-                desc = "Configure Dumb Dumb NPC spawning, healing, immortality, and armor presets."
-            }
-        }
-    end
+function dummy_menu()
+    local presetNames = { "1: Light", "2: Medium", "3: Heavy Full Plate" }
+    local curPreset = presetNames[DummySpawner.currentPresetIdx or 1] or "1: Light"
+    local hostileState = DummySpawner.isHostile and "HOSTILE (Sparring)" or "WAIT (Neutral)"
+    local autoHealState = DummySpawner.autoHealWaiting and "ON" or "OFF"
+    local immortalState = (DummySpawner.isImmortal ~= false) and "ON" or "OFF"
+    local isSpawned = DummySpawner.spawnedEntityId and "SPAWNED" or "DESPAWNED"
 
     if System and System.LogAlways then
-        System.LogAlways("[Dummy] Registered Dumb Dumb Mod into Minimap Companion Panel.")
+        System.LogAlways("[Dummy] ================= DUMB DUMB MOD (STANDALONE) =================")
+        System.LogAlways("[Dummy]  Status:    " .. isSpawned)
+        System.LogAlways("[Dummy]  Mode:      " .. hostileState)
+        System.LogAlways("[Dummy]  Armor:     " .. curPreset)
+        System.LogAlways("[Dummy]  Immortal:  " .. immortalState)
+        System.LogAlways("[Dummy]  Auto-Heal: " .. autoHealState)
+        System.LogAlways("[Dummy]  Hotkeys:")
+        System.LogAlways("[Dummy]    [" .. tostring(DummySpawner.KEYBIND_SPAWN or "/") .. "]        - Spawn / Despawn Dumb Dumb")
+        System.LogAlways("[Dummy]    [" .. tostring(DummyConfig.menuKey or "F3") .. "]       - Display Mod Status Overview")
+        System.LogAlways("[Dummy]    E          - Tap E on target to cycle armor presets")
+        System.LogAlways("[Dummy]    Hold V     - Hold V on target to toggle Hostile / Wait mode")
+        System.LogAlways("[Dummy]  Commands:")
+        System.LogAlways("[Dummy]    dummy_spawn      - Toggle spawn/despawn")
+        System.LogAlways("[Dummy]    dummy_next       - Cycle to next armor preset")
+        System.LogAlways("[Dummy]    dummy_prev       - Cycle to previous armor preset")
+        System.LogAlways("[Dummy]    dummy_preset <N> - Set armor preset (1=Light, 2=Medium, 3=Heavy)")
+        System.LogAlways("[Dummy]    dummy_heal       - Heal Dumb Dumb to 100% full health")
+        System.LogAlways("[Dummy]    dummy_immortal   - Toggle immortality on / off")
+        System.LogAlways("[Dummy]    dummy_autoheal   - Toggle auto-healing in waiting mode")
+        System.LogAlways("[Dummy]    dummy_bind <key> - Rebind spawn key (e.g. dummy_bind /)")
+        System.LogAlways("[Dummy] ===================================================================")
     end
-end
-
--- Inject menu into global environment immediately
-Dummy_InjectMinimapMenu()
-
-function dummy_menu()
-    Dummy_InjectMinimapMenu()
-    if _G.minimap and _G.minimap.UiOpen then
-        _G.minimap.UiOpen(true)
-        if _G.minimap.UiEnter then
-            _G.minimap.UiEnter("dummy")
-        end
-    else
-        if Game and Game.SendInfoText then
-            Game.SendInfoText("ui_dummy_menu_opened", false, 0, 4)
-        end
+    if Game and Game.SendInfoText then
+        Game.SendInfoText("ui_dummy_menu_opened", false, 0, 4)
     end
 end
 
@@ -181,14 +173,18 @@ if System and System.AddCCommand then
     System.AddCCommand("dummy_preset",   "dummy_preset(%1)",    "Set specific armor preset (dummy_preset 1/2/3)")
     System.AddCCommand("dummy_bind",     "dummy_bind(%1)",      "Rebind spawn toggle hotkey (e.g. dummy_bind /)")
     System.AddCCommand("dummy_heal",     "dummy_heal()",        "Heal Dumb Dumb to full health")
-    System.AddCCommand("dummy_immortal", "dummy_immortal()",    "Toggle Dumb Dumb invulnerability on/off")
+    System.AddCCommand("dummy_immortal", "dummy_immortal(%1)",  "Toggle Dumb Dumb invulnerability (dummy_immortal 1 / 0)")
     System.AddCCommand("dummy_autoheal", "dummy_autoheal(%1)",  "Toggle auto-healing in waiting mode (dummy_autoheal 1 / 0)")
-    System.AddCCommand("dummy_menu",     "dummy_menu()",        "Toggle Dumb Dumb Companion Menu Panel")
+    System.AddCCommand("dummy_menu",     "dummy_menu()",        "Display Dumb Dumb Mod status and commands")
+    System.AddCCommand("dummy_help",     "dummy_menu()",        "Display Dumb Dumb Mod status and commands (alias)")
 end
 
 -- Auto-bind default spawn hotkey (/) and menu hotkey (F3) on load
 if DummySpawner and DummySpawner.BindKey then
-    DummySpawner:BindKey()
+    DummySpawner:BindKey(DummyConfig.spawnKey)
+    if System and System.ExecuteCommand then
+        System.ExecuteCommand("bind " .. (DummyConfig.menuKey or "f3") .. " dummy_menu")
+    end
 end
 
 if System and System.LogAlways then
