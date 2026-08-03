@@ -3,7 +3,7 @@
 ------------------------------------------------------------
 
 if System and System.LogAlways then
-    System.LogAlways("[Dummy] === LOADING DUMMY.LUA (STANDALONE SCALEFORM PANEL) ===")
+    System.LogAlways("[Dummy] === LOADING DUMMY.LUA ===")
 end
 
 -- Configuration Defaults
@@ -45,7 +45,7 @@ end
 
 Dummy_LoadConfig()
 
--- Global Wrapper Functions for Commands
+-- Global Wrapper Functions for Console Commands
 function dummy_spawn() DummySpawner:Toggle() end
 function dummy_next()  DummySpawner:NextPreset() end
 function dummy_prev()  DummySpawner:PrevPreset() end
@@ -119,8 +119,89 @@ function dummy_autoheal(enable)
 end
 
 ------------------------------------------------------------
---  SCALEFORM ON-SCREEN MENU PANEL SYSTEM
+--  MENU PANEL SYSTEM (MINIMAP ASI & LUA SCALEFORM)
 ------------------------------------------------------------
+
+function Dummy_InjectMinimapMenu()
+    _G.minimap = _G.minimap or {}
+    local M = _G.minimap
+    M.ui = M.ui or { open = false, menu = "main", sel = 1, stack = {} }
+    M.menus = M.menus or {}
+
+    local onoff = function(v) return v and "ON" or "OFF" end
+    local dummyMenu = {
+        { label = "< Back", back = true, desc = "Return to parent menu." },
+        {
+            label = "Spawn / Despawn",
+            get = function() return DummySpawner.spawnedEntityId and "SPAWNED" or "DESPAWNED" end,
+            change = function() DummySpawner:Toggle() end,
+            desc = "Spawn or despawn Dumb Dumb NPC right in front of Henry."
+        },
+        {
+            label = "Heal Dumb Dumb",
+            action = function() DummySpawner:Heal() end,
+            desc = "Restore Dumb Dumb to 100% full health."
+        },
+        {
+            label = "Immortal Mode",
+            get = function() return onoff(DummySpawner.isImmortal ~= false) end,
+            change = function() if DummyInteraction and DummyInteraction.ToggleImmortal then DummyInteraction:ToggleImmortal() end end,
+            desc = "Toggle Dumb Dumb invulnerability on or off."
+        },
+        {
+            label = "Auto-Heal (Wait)",
+            get = function() return onoff(DummySpawner.autoHealWaiting) end,
+            change = function() dummy_autoheal() end,
+            desc = "Auto-heal Dumb Dumb when health is low in waiting mode."
+        },
+        {
+            label = "Armor Preset",
+            get = function()
+                local names = { "Light", "Medium", "Heavy Full Plate" }
+                return names[DummySpawner.currentPresetIdx or 1] or "Light"
+            end,
+            change = function(dir)
+                if dir and dir < 0 then DummySpawner:PrevPreset() else DummySpawner:NextPreset() end
+            end,
+            desc = "Cycle Dumb Dumb's armor preset (Light / Medium / Heavy Full Plate)."
+        },
+        {
+            label = "Hostile Mode",
+            get = function() return DummySpawner.isHostile and "Hostile (Sparring)" or "Wait (Neutral)" end,
+            change = function() DummySpawner:ToggleHostile() end,
+            desc = "Toggle between stationary target (Wait) and sparring practice (Hostile)."
+        }
+    }
+
+    M.menus.dummy = dummyMenu
+
+    if M.menus.main then
+        local exists = false
+        for _, item in ipairs(M.menus.main) do
+            if item.goto_ == "dummy" then
+                exists = true
+                break
+            end
+        end
+        if not exists then
+            table.insert(M.menus.main, 1, {
+                label = "Dumb Dumb Mod",
+                goto_ = "dummy",
+                desc = "Configure Dumb Dumb NPC spawning, healing, immortality, and armor presets."
+            })
+        end
+    else
+        M.menus.main = {
+            {
+                label = "Dumb Dumb Mod",
+                goto_ = "dummy",
+                desc = "Configure Dumb Dumb NPC spawning, healing, immortality, and armor presets."
+            }
+        }
+    end
+end
+
+Dummy_InjectMinimapMenu()
 
 DummyPanel = DummyPanel or { isOpen = false, sel = 1 }
 
@@ -227,7 +308,15 @@ function DummyPanel:Nav(cmd)
 end
 
 function dummy_menu()
-    DummyPanel:Toggle()
+    Dummy_InjectMinimapMenu()
+    if _G.minimap and _G.minimap.UiOpen then
+        _G.minimap.UiOpen(true)
+        if _G.minimap.UiEnter then
+            _G.minimap.UiEnter("dummy")
+        end
+    else
+        DummyPanel:Toggle()
+    end
 end
 
 function dummy_panel_up()     DummyPanel:Nav("up") end
