@@ -20,7 +20,7 @@
                         <Loop count="-1">
                             <Sequence>
                                 <Wait duration="'500ms'" timeType="GameTime" doFail="false" variation="'100ms'" />
-                                <ExecuteLua code="data.isHostile = DummySpawner and DummySpawner.isHostile or false" />
+                                <ExecuteLua code="if DummySpawner then if not DummySpawner.spawnedEntityId then DummySpawner:FindSavedDummy() end data.isHostile = DummySpawner.isHostile or false else data.isHostile = false end" />
 
                                 <IfElseCondition failOnCondition="false" condition="$isHostile" saveVersion="2">
                                     <Then canSkip="1">

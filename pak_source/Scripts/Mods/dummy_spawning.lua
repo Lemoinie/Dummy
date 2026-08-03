@@ -227,14 +227,18 @@ function DummySpawner:FreezeEntity(entity)
     end
 
     -- Invulnerability flags (prevents death / HP change event triggering panic)
+    local makeImmortal = (DummySpawner.isImmortal ~= false)
     if entity.SetInvulnerability then
-        pcall(function() entity:SetInvulnerability(true) end)
+        pcall(function() entity:SetInvulnerability(makeImmortal) end)
     end
-    entity.invulnerable = true
+    if entity.actor then
+        pcall(function() entity.actor:SetInvulnerable(makeImmortal) end)
+    end
+    entity.invulnerable = makeImmortal
     if entity.Properties then
-        entity.Properties.bInvulnerable = true
+        entity.Properties.bInvulnerable = makeImmortal
         if entity.Properties.Health then
-            entity.Properties.Health.bInvulnerable = true
+            entity.Properties.Health.bInvulnerable = makeImmortal
         end
     end
 
@@ -414,3 +418,5 @@ function DummySpawner:PrevPreset()
     end
     DummyEquipment:ApplyPreset(self.spawnedEntityId, self.currentPresetIdx)
 end
+i f   G a m e . R e g i s t e r L i s t e n e r   t h e n   G a m e . R e g i s t e r L i s t e n e r ( D u m m y S p a w n e r )   e n d  
+ 
