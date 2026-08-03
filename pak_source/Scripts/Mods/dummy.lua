@@ -176,18 +176,18 @@ function dummy_help() dummy_status() end
 
 -- Register Console Commands
 if System and System.AddCCommand then
-    System.AddCCommand("dummy_spawn",    "dummy_spawn()",       "Toggle Dumb Dumb NPC spawn")
-    System.AddCCommand("dummy",          "dummy_spawn()",       "Toggle Dumb Dumb NPC spawn (short alias)")
-    System.AddCCommand("dummy_next",     "dummy_next()",        "Cycle to next armor preset")
-    System.AddCCommand("dummy_prev",     "dummy_prev()",        "Cycle to previous armor preset")
-    System.AddCCommand("dummy_preset",   "dummy_preset(%1)",    "Set specific armor preset (dummy_preset 1/2/3)")
-    System.AddCCommand("dummy_bind",     "dummy_bind(%1)",      "Rebind spawn toggle hotkey (e.g. dummy_bind /)")
-    System.AddCCommand("dummy_heal",     "dummy_heal()",        "Heal Dumb Dumb to full health")
-    System.AddCCommand("dummy_immortal", "dummy_immortal(%1)",  "Toggle Dumb Dumb invulnerability (dummy_immortal 1 / 0)")
-    System.AddCCommand("dummy_autoheal", "dummy_autoheal(%1)",  "Toggle auto-healing in waiting mode (dummy_autoheal 1 / 0)")
-    System.AddCCommand("dummy_status",   "dummy_status()",      "Display Dumb Dumb Mod status and command list")
-    System.AddCCommand("dummy_info",     "dummy_info()",        "Display Dumb Dumb Mod status (alias)")
-    System.AddCCommand("dummy_help",     "dummy_help()",        "Display Dumb Dumb Mod status (alias)")
+    System.AddCCommand("dummy_spawn",    "dummy_spawn()",         "Toggle Dumb Dumb NPC spawn")
+    System.AddCCommand("dummy",          "dummy_spawn()",         "Toggle Dumb Dumb NPC spawn (short alias)")
+    System.AddCCommand("dummy_next",     "dummy_next()",          "Cycle to next armor preset")
+    System.AddCCommand("dummy_prev",     "dummy_prev()",          "Cycle to previous armor preset")
+    System.AddCCommand("dummy_preset",   "dummy_preset('%1')",    "Set specific armor preset (dummy_preset 1/2/3)")
+    System.AddCCommand("dummy_bind",     "dummy_bind('%1')",      "Rebind spawn toggle hotkey (e.g. dummy_bind /)")
+    System.AddCCommand("dummy_heal",     "dummy_heal()",          "Heal Dumb Dumb to full health")
+    System.AddCCommand("dummy_immortal", "dummy_immortal('%1')",  "Toggle Dumb Dumb invulnerability (dummy_immortal 1 / 0)")
+    System.AddCCommand("dummy_autoheal", "dummy_autoheal('%1')",  "Toggle auto-healing in waiting mode (dummy_autoheal 1 / 0)")
+    System.AddCCommand("dummy_status",   "dummy_status()",        "Display Dumb Dumb Mod status and command list")
+    System.AddCCommand("dummy_info",     "dummy_info()",          "Display Dumb Dumb Mod status (alias)")
+    System.AddCCommand("dummy_help",     "dummy_help()",          "Display Dumb Dumb Mod status (alias)")
 end
 
 -- If spawnKey is set in dummy.cfg, bind it; otherwise no default key is bound

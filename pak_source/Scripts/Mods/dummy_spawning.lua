@@ -38,12 +38,31 @@ function DummySpawner:BindKey(key)
     end
 end
 
+function DummySpawner:FindSavedDummy()
+    if self.spawnedEntityId and System.GetEntity(self.spawnedEntityId) then
+        return true
+    end
+    -- Try to find entity loaded from a save file
+    local existingEntity = System.GetEntityByName("DummyTarget_DumbDumb_Unique")
+    if existingEntity then
+        self.spawnedEntityId = existingEntity.id
+        self:Log("Re-attached to existing Dumb Dumb from save.")
+        if DummyInteraction and DummyInteraction.Inject then
+            DummyInteraction:Inject(existingEntity)
+        end
+        return true
+    end
+    self.spawnedEntityId = nil
+    return false
+end
+
 ------------------------------------------------------------
 --  HEALING LOGIC
 ------------------------------------------------------------
 
 function DummySpawner:Heal(entity)
-    entity = entity or System.GetEntity(self.spawnedEntityId)
+    self:FindSavedDummy()
+    entity = entity or (self.spawnedEntityId and System.GetEntity(self.spawnedEntityId))
     if not entity then
         self:Log("No active dummy to heal.")
         return
@@ -122,8 +141,9 @@ end
 ------------------------------------------------------------
 
 function DummySpawner:SetHostileState(hostile)
+    self:FindSavedDummy()
     self.isHostile = hostile
-    local entity = System.GetEntity(self.spawnedEntityId)
+    local entity = self.spawnedEntityId and System.GetEntity(self.spawnedEntityId)
     if not entity then return end
 
     local pl = self:GetPlayer()
@@ -253,7 +273,7 @@ end
 ------------------------------------------------------------
 
 function DummySpawner:Spawn()
-    if self.spawnedEntityId then
+    if self:FindSavedDummy() then
         self:Log("Dummy already exists – despawning first.")
         self:Despawn()
     end
@@ -265,7 +285,7 @@ function DummySpawner:Spawn()
     end
 
     local spawnPos, facingDir = self:GetPosInFront(pl, self.SPAWN_DISTANCE)
-    local entityName = "DummyTarget_DumbDumb_" .. tostring(math.random(10000, 99999))
+    local entityName = "DummyTarget_DumbDumb_Unique"
 
     self.isHostile = false
 
@@ -330,7 +350,7 @@ function DummySpawner:Spawn()
 end
 
 function DummySpawner:Despawn()
-    if not self.spawnedEntityId then
+    if not self:FindSavedDummy() then
         self:Log("No dummy to despawn.")
         return
     end
@@ -343,7 +363,7 @@ function DummySpawner:Despawn()
 end
 
 function DummySpawner:Toggle()
-    if self.spawnedEntityId then
+    if self:FindSavedDummy() then
         self:Despawn()
     else
         self:Spawn()
@@ -355,7 +375,7 @@ end
 ------------------------------------------------------------
 
 function DummySpawner:NextPreset()
-    if not self.spawnedEntityId then
+    if not self:FindSavedDummy() then
         self:Log("Spawn a dummy first.")
         return
     end
@@ -364,7 +384,7 @@ function DummySpawner:NextPreset()
 end
 
 function DummySpawner:PrevPreset()
-    if not self.spawnedEntityId then
+    if not self:FindSavedDummy() then
         self:Log("Spawn a dummy first.")
         return
     end
