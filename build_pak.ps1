@@ -90,6 +90,15 @@ if (Test-Path $questsDir) {
     }
 }
 
+# --- Storm rule XMLs (roles / appearance / equipment) ---
+$stormDir = Join-Path $pakSource "libs\Storm"
+if (Test-Path $stormDir) {
+    foreach ($f in Get-ChildItem $stormDir -Recurse -Filter "*.xml") {
+        $relPath = $f.FullName.Substring($pakSource.Length + 1).Replace("\", "/")
+        Add-FileToZip $zip $relPath $f.FullName
+    }
+}
+
 $zip.Dispose()
 Write-Host "  -> $dataPak"
 
