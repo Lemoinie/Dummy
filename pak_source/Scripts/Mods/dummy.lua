@@ -8,7 +8,7 @@ end
 
 -- Configuration Defaults
 DummyConfig = DummyConfig or {
-    spawnKey = "/",
+    spawnKey = nil,
     isImmortal = true,
     autoHealWaiting = true,
     defaultPreset = 1
@@ -34,7 +34,7 @@ function Dummy_LoadConfig()
     end)
 
     if DummySpawner then
-        DummySpawner.KEYBIND_SPAWN = DummyConfig.spawnKey or "/"
+        DummySpawner.KEYBIND_SPAWN = DummyConfig.spawnKey
         DummySpawner.isImmortal = DummyConfig.isImmortal
         DummySpawner.autoHealWaiting = DummyConfig.autoHealWaiting
         DummySpawner.currentPresetIdx = DummyConfig.defaultPreset or 1
@@ -82,7 +82,7 @@ end
 
 function dummy_bind(key)
     local kStr = tostring(key or "")
-    if kStr ~= "" and kStr ~= "nil" then
+    if kStr ~= "" and kStr ~= "nil" and kStr ~= "none" then
         if DummySpawner and DummySpawner.BindKey then
             DummySpawner:BindKey(kStr)
         end
@@ -142,6 +142,7 @@ function dummy_status()
     local autoHealState = DummySpawner.autoHealWaiting and "ON" or "OFF"
     local immortalState = (DummySpawner.isImmortal ~= false) and "ON" or "OFF"
     local isSpawned = DummySpawner.spawnedEntityId and "SPAWNED" or "DESPAWNED"
+    local hotkeyStr = DummySpawner.KEYBIND_SPAWN and ("[" .. tostring(DummySpawner.KEYBIND_SPAWN) .. "]") or "None (Use 'dummy_spawn' or 'dummy_bind <key>')"
 
     if System and System.LogAlways then
         System.LogAlways("[Dummy] ================= DUMB DUMB MOD STATUS =================")
@@ -150,8 +151,8 @@ function dummy_status()
         System.LogAlways("[Dummy]  Armor:     " .. curPreset)
         System.LogAlways("[Dummy]  Immortal:  " .. immortalState)
         System.LogAlways("[Dummy]  Auto-Heal: " .. autoHealState)
-        System.LogAlways("[Dummy]  Hotkeys:")
-        System.LogAlways("[Dummy]    [" .. tostring(DummySpawner.KEYBIND_SPAWN or "/") .. "]        - Spawn / Despawn Dumb Dumb")
+        System.LogAlways("[Dummy]  Spawn Key: " .. hotkeyStr)
+        System.LogAlways("[Dummy]  Interactions:")
         System.LogAlways("[Dummy]    E          - Tap E on target to cycle armor presets")
         System.LogAlways("[Dummy]    Hold V     - Hold V on target to toggle Hostile / Wait mode")
         System.LogAlways("[Dummy]  Commands:")
@@ -189,8 +190,8 @@ if System and System.AddCCommand then
     System.AddCCommand("dummy_help",     "dummy_help()",        "Display Dumb Dumb Mod status (alias)")
 end
 
--- Auto-bind default spawn hotkey (/) on load
-if DummySpawner and DummySpawner.BindKey then
+-- If spawnKey is set in dummy.cfg, bind it; otherwise no default key is bound
+if DummySpawner and DummyConfig.spawnKey then
     DummySpawner:BindKey(DummyConfig.spawnKey)
 end
 
