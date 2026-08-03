@@ -12,15 +12,8 @@
   <Row><Cell>ui_dummy_change_preset_heavy</Cell><Cell>Armor: Heavy Full Plate</Cell><Cell>Armor: Heavy Full Plate</Cell></Row>
 
   <!-- F3 Dedicated On-Screen HUD Menu Localization Keys -->
-  <Row><Cell>ui_dummy_menu_title</Cell><Cell>DUMB DUMB MOD MENU [F3]</Cell><Cell>DUMB DUMB MOD MENU [F3]</Cell></Row>
-  <Row><Cell>ui_dummy_menu_closed_msg</Cell><Cell>Menu Closed. Controls restored.</Cell><Cell>Menu Closed. Controls restored.</Cell></Row>
-  <Row><Cell>ui_dummy_menu_h1</Cell><Cell>[1] Heal Dumb Dumb to Full Health</Cell><Cell>[1] Heal Dumb Dumb to Full Health</Cell></Row>
-  <Row><Cell>ui_dummy_menu_h2</Cell><Cell>[2] Toggle Immortal Invulnerability</Cell><Cell>[2] Toggle Immortal Invulnerability</Cell></Row>
-  <Row><Cell>ui_dummy_menu_h3</Cell><Cell>[3] Toggle Auto-Heal in Waiting</Cell><Cell>[3] Toggle Auto-Heal in Waiting</Cell></Row>
-  <Row><Cell>ui_dummy_menu_h4</Cell><Cell>[4] Change Armor Preset (Light / Medium / Heavy)</Cell><Cell>[4] Change Armor Preset (Light / Medium / Heavy)</Cell></Row>
-  <Row><Cell>ui_dummy_menu_h5</Cell><Cell>[5] Toggle Hostile Sparring / Wait Mode</Cell><Cell>[5] Toggle Hostile Sparring / Wait Mode</Cell></Row>
-  <Row><Cell>ui_dummy_menu_h6</Cell><Cell>[6] Spawn or Despawn Dumb Dumb</Cell><Cell>[6] Spawn or Despawn Dumb Dumb</Cell></Row>
-  <Row><Cell>ui_dummy_menu_h0</Cell><Cell>[0] Close Configurator Menu</Cell><Cell>[0] Close Configurator Menu</Cell></Row>
+  <Row><Cell>ui_dummy_menu_opened</Cell><Cell>Dumb Dumb Configurator [F3]</Cell><Cell>Dumb Dumb Configurator [F3]</Cell></Row>
+  <Row><Cell>ui_dummy_menu_closed_msg</Cell><Cell>Menu Closed.</Cell><Cell>Menu Closed.</Cell></Row>
   <Row><Cell>ui_dummy_menu_opt1</Cell><Cell>Healed Dumb Dumb to 100% full health.</Cell><Cell>Healed Dumb Dumb to 100% full health.</Cell></Row>
   <Row><Cell>ui_dummy_menu_opt2_on</Cell><Cell>Immortal Invulnerability: ENABLED</Cell><Cell>Immortal Invulnerability: ENABLED</Cell></Row>
   <Row><Cell>ui_dummy_menu_opt2_off</Cell><Cell>Immortal Invulnerability: DISABLED</Cell><Cell>Immortal Invulnerability: DISABLED</Cell></Row>
