@@ -58,6 +58,13 @@ function DummyEquipment:ApplyPreset(entityId, index)
         end)
     end
 
+    -- Re-equip weapon after undressing, otherwise the Dummy can't fight!
+    pcall(function()
+        if entity.actor.EquipWeaponPreset then
+            entity.actor:EquipWeaponPreset("94600b75-8cd2-42f5-8a85-9e5ad0db8318")
+        end
+    end)
+
     if System and System.LogAlways then
         System.LogAlways("[Dummy] Applied armor preset " .. tostring(index) .. ": " .. preset.name)
     end

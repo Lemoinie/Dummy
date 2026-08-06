@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="barbora" xsi:noNamespaceSchemaLocation="../database.xsd">
+	<subbrains version="1">
+		<!-- Dummy scheduler subbrain: fires dummy_scheduler.xml permanently. -->
+		<subbrain always_active="true" subbrain_id="a1b2c3d4-0002-4000-8000-100000000002" subbrain_name="dummy_scheduler" subbrain_type="6" timeout="0" />
+	</subbrains>
+</database>

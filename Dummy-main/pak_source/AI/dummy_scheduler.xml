@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<BehaviorTrees>
+    <!-- Dummy training target scheduler: handles both Wait (idle) and Hostile (combat) modes. -->
+    <BehaviorTree name="onUpdate" is_function="0">
+        <Variables>
+            <Variable name="playerWUID"          type="_wuid"                         values="" isPersistent="0" form="single" />
+            <Variable name="isHostile"           type="_bool"                         values="false" isPersistent="0" form="single" />
+            <Variable name="inCombat"            type="_bool"                         values="false" isPersistent="0" form="single" />
+            <Variable name="attackData"          type="switch:interruptData:attack"   values="" isPersistent="0" form="single" />
+            <Variable name="crimeInformation"    type="information"                  values="" isPersistent="0" form="single" />
+            <Variable name="mrkev"               type="_wuid"                         values="" isPersistent="0" form="single" />
+            <Variable name="dialogRequest"       type="dialogModule:onDialogRequest" values="" isPersistent="0" form="single" />
+        </Variables>
+        <Root OneTimeOnly="false" FailState="Recoverable" saveVersion="2">
+            <Behavior canSkip="1">
+                <SuppressFailure>
+                    <Parallel successMode="Any" failureMode="Any">
+
+                        <!-- Main loop checking state and triggering attack interrupt ONCE on hostile toggle -->
+                        <Loop count="-1">
+                            <Sequence>
+                                <Wait duration="'500ms'" timeType="GameTime" doFail="false" variation="'100ms'" />
+                                <ExecuteLua code="data.isHostile = DummySpawner and DummySpawner.isHostile or false" />
+
+                                <IfElseCondition failOnCondition="false" condition="$isHostile" saveVersion="2">
+                                    <Then canSkip="1">
+                                        <!-- Hostile Mode: if not already in combat, start combat_melee ONCE -->
+                                        <IfCondition failOnCondition="false" condition="~$inCombat">
+                                            <Sequence>
+                                                <Expression expressions="$inCombat = true" />
+                                                <Function_crime_getMrkev mrkev="$mrkev" nodeLabel="1234" />
+                                                <CreateInformationWrapper Label="'assault'" PerceivedWuid="$this.id" PositionType="positionWuid" PositionVec3="" PositionWuid="$__player" Information="$crimeInformation" />
+                                                <Expression expressions="$attackData.target = $__player &#10; $attackData.information = $crimeInformation &#10; $attackData.stimulusKind = $enum:crime_stimulusKind.combat &#10; $attackData.initiatedBy = $enum:switch_interruptInitiator.switch &#10; $attackData.defenceMode = false &#10; $attackData.relationOverride = true &#10; $attackData.source = $enum:crime_source.direct" />
+                                                <AddInterrupt_attack attackData="$attackData" Target="$this.id" Host="$mrkev" Behavior="'combat_melee'" Priority="160" IgnorePriorityOnPreviousInterrupt="true" urgency="Fast" Aliveness="Alive" Privileged="false" FastForward="false" />
+                                            </Sequence>
+                                        </IfCondition>
+                                    </Then>
+                                    <Else canSkip="1">
+                                        <!-- Wait Mode: reset combat flag if toggled back to neutral -->
+                                        <IfCondition failOnCondition="false" condition="$inCombat">
+                                            <Sequence>
+                                                <Expression expressions="$inCombat = false" />
+                                                <ExecuteLua code="pcall(function() entity.soul:SetTarget(nil) end)" />
+                                            </Sequence>
+                                        </IfCondition>
+                                        <EntityContext context="crime_suppressBehavioralReaction" target="$this.id">
+                                            <EntityContext context="crime_preventDespawn" target="$this.id">
+                                                <Sequence>
+                                                    <Wait duration="'1s'" timeType="GameTime" doFail="false" variation="'200ms'" />
+                                                </Sequence>
+                                            </EntityContext>
+                                        </EntityContext>
+                                    </Else>
+                                </IfElseCondition>
+                            </Sequence>
+                        </Loop>
+
+                    </Parallel>
+                </SuppressFailure>
+            </Behavior>
+        </Root>
+    </BehaviorTree>
+</BehaviorTrees>

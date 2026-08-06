@@ -92,6 +92,24 @@ function dummy_bind(key)
     end
 end
 
+function dummy_mode(enable)
+    if not DummySpawner then return end
+    local str = tostring(enable or ""):lower():gsub("%s+", "")
+    if str == "" or str == "%1" or str == "%line" or str == "nil" or str == "toggle" then
+        DummySpawner:ToggleHostile()
+    elseif str == "1" or str == "true" or str == "on" or str == "hostile" or str == "fight" or str == "combat" then
+        DummySpawner:SetHostileState(true)
+    elseif str == "0" or str == "false" or str == "off" or str == "wait" or str == "waiting" or str == "neutral" then
+        DummySpawner:SetHostileState(false)
+    else
+        DummySpawner:ToggleHostile()
+    end
+end
+
+function dummy_hostile(enable)
+    dummy_mode(enable)
+end
+
 function dummy_heal()
     if DummySpawner and DummySpawner.Heal then
         DummySpawner:Heal()
@@ -161,6 +179,7 @@ function dummy_status()
         System.LogAlways("[Dummy]    dummy_next       - Cycle to next armor preset")
         System.LogAlways("[Dummy]    dummy_prev       - Cycle to previous armor preset")
         System.LogAlways("[Dummy]    dummy_preset <N> - Set armor preset (1=Light, 2=Medium, 3=Heavy)")
+        System.LogAlways("[Dummy]    dummy_mode [1/0] - Toggle or set Hostile (combat) / Wait mode (alias: dummy_hostile)")
         System.LogAlways("[Dummy]    dummy_heal       - Heal Dumb Dumb to 100% full health")
         System.LogAlways("[Dummy]    dummy_immortal   - Toggle immortality on / off")
         System.LogAlways("[Dummy]    dummy_autoheal   - Toggle auto-healing in waiting mode")
@@ -177,15 +196,19 @@ function dummy_help() dummy_status() end
 
 -- Register Console Commands
 if System and System.AddCCommand then
+    System.AddCCommand("dummy_despawn", "DummySpawner:Despawn()", "Despawns the dummy target")
+    System.AddCCommand("dummy_debug_ai", "DummySpawner:DebugAI()", "Prints dummy AI state for debugging")
     System.AddCCommand("dummy_spawn",    "dummy_spawn()",         "Toggle Dumb Dumb NPC spawn")
     System.AddCCommand("dummy",          "dummy_spawn()",         "Toggle Dumb Dumb NPC spawn (short alias)")
     System.AddCCommand("dummy_next",     "dummy_next()",          "Cycle to next armor preset")
     System.AddCCommand("dummy_prev",     "dummy_prev()",          "Cycle to previous armor preset")
-    System.AddCCommand("dummy_preset",   "dummy_preset('%1')",    "Set specific armor preset (dummy_preset 1/2/3)")
-    System.AddCCommand("dummy_bind",     "dummy_bind('%1')",      "Rebind spawn toggle hotkey (e.g. dummy_bind /)")
+    System.AddCCommand("dummy_preset",   "dummy_preset(%line)",   "Set specific armor preset (dummy_preset 1/2/3)")
+    System.AddCCommand("dummy_mode",     "dummy_mode(%line)",     "Toggle Dumb Dumb mode (Wait vs Hostile)")
+    System.AddCCommand("dummy_hostile",  "dummy_hostile(%line)",  "Toggle Dumb Dumb Hostile mode (alias for dummy_mode)")
+    System.AddCCommand("dummy_bind",     "dummy_bind(%line)",     "Rebind spawn toggle hotkey (e.g. dummy_bind /)")
     System.AddCCommand("dummy_heal",     "dummy_heal()",          "Heal Dumb Dumb to full health")
-    System.AddCCommand("dummy_immortal", "dummy_immortal()",      "Toggle Dumb Dumb invulnerability")
-    System.AddCCommand("dummy_autoheal", "dummy_autoheal()",      "Toggle auto-healing in waiting mode")
+    System.AddCCommand("dummy_immortal", "dummy_immortal(%line)", "Toggle Dumb Dumb invulnerability")
+    System.AddCCommand("dummy_autoheal", "dummy_autoheal(%line)", "Toggle auto-healing in waiting mode")
     System.AddCCommand("dummy_status",   "dummy_status()",        "Display Dumb Dumb Mod status and command list")
     System.AddCCommand("dummy_info",     "dummy_info()",          "Display Dumb Dumb Mod status (alias)")
     System.AddCCommand("dummy_help",     "dummy_help()",          "Display Dumb Dumb Mod status (alias)")

@@ -38,50 +38,11 @@ function DummySpawner:BindKey(key)
     end
 end
 
-function DummySpawner:FindSavedDummy()
-    if self.spawnedEntityId and System.GetEntity(self.spawnedEntityId) then
-        return true
-    end
-    
-    local existingEntity = System.GetEntityByName("DummyTarget_DumbDumb_Unique")
-    
-    -- Fallback: Search all NPCs for the unique soul GUID if name wasn't saved properly
-    if not existingEntity and System.GetEntitiesByClass then
-        local ents = System.GetEntitiesByClass(self.ENTITY_CLASS)
-        if ents then
-            for _, ent in pairs(ents) do
-                if ent.Properties and ent.Properties.guidSharedSoulId == self.SOUL_GUID then
-                    existingEntity = ent
-                    break
-                end
-            end
-        end
-    end
-
-    if existingEntity then
-        self.spawnedEntityId = existingEntity.id
-        self:Log("Re-attached to existing Dumb Dumb from save.")
-        
-        -- Re-apply properties that might be lost during save/load
-        self:ApplyName(existingEntity)
-        self:ApplyFaction(existingEntity)
-        self:FreezeEntity(existingEntity)
-        
-        if DummyInteraction and DummyInteraction.Inject then
-            DummyInteraction:Inject(existingEntity)
-        end
-        return true
-    end
-    self.spawnedEntityId = nil
-    return false
-end
-
 ------------------------------------------------------------
 --  HEALING LOGIC
 ------------------------------------------------------------
 
 function DummySpawner:Heal(entity)
-    self:FindSavedDummy()
     entity = entity or (self.spawnedEntityId and System.GetEntity(self.spawnedEntityId))
     if not entity then
         self:Log("No active dummy to heal.")
@@ -159,11 +120,9 @@ end
 ------------------------------------------------------------
 --  STATE TOGGLING (Wait vs Hostile - key V)
 ------------------------------------------------------------
-
 function DummySpawner:SetHostileState(hostile)
-    self:FindSavedDummy()
     self.isHostile = hostile
-    local entity = self.spawnedEntityId and System.GetEntity(self.spawnedEntityId)
+    local entity = (self.spawnedEntityId and System and System.GetEntity) and System.GetEntity(self.spawnedEntityId) or nil
     if not entity then return end
 
     local pl = self:GetPlayer()
@@ -171,31 +130,66 @@ function DummySpawner:SetHostileState(hostile)
 
     if hostile then
         self:Log("Dumb Dumb is now HOSTILE!")
-        pcall(function() entity.soul:SetHostile(true) end)
-        if targetId then
-            pcall(function() entity.soul:SetTarget(targetId) end)
-        end
-        pcall(function() entity.human:DrawWeapon(true) end)
+        if not entity.Properties then entity.Properties = {} end
+        entity.Properties.bHostile = true
+        entity.Properties.playerWUID = targetId
+        
         if AI and AI.ChangeFaction then
             pcall(function() AI.ChangeFaction(entity.id, "bandit") end)
         end
+        if entity.soul then
+            pcall(function() entity.soul:SetFaction("bandit") end)
+            pcall(function() entity.soul:SetHostile(true) end)
+            pcall(function() entity.soul:SetCrimeIgnored(false) end)
+            if targetId then
+                pcall(function() entity.soul:SetTarget(targetId) end)
+            end
+        end
+        
+        if AI and AI.SetBehaviorVariable then
+            pcall(function() AI.SetBehaviorVariable(entity.id, "isHostile", true) end)
+            if targetId then
+                pcall(function() AI.SetBehaviorVariable(entity.id, "playerWUID", targetId) end)
+            end
+        end
+        
+        pcall(function() entity.soul:SetState("health", 100) end)
+        pcall(function() entity.soul:SetState("stamina", 100) end)
         if Game and Game.SendInfoText then
             Game.SendInfoText("ui_dummy_info_hostile", false, 0, 3)
         end
     else
         self:Log("Dumb Dumb is now WAITING (Neutral).")
-        pcall(function() entity.soul:SetTarget(nil) end)
-        pcall(function() entity.soul:SetHostile(false) end)
-        pcall(function() entity.human:DrawWeapon(false) end)
+        if not entity.Properties then entity.Properties = {} end
+        entity.Properties.bHostile = false
+        
         if AI and AI.ChangeFaction then
             pcall(function() AI.ChangeFaction(entity.id, "dummyFaction") end)
         end
-        -- Sheathe weapon & clear target immediately
-        pcall(function()
-            if entity.actor and entity.human then
-                entity.human:DrawWeapon(false)
-            end
-        end)
+        if entity.soul then
+            pcall(function() entity.soul:SetTarget(nil) end)
+            pcall(function() entity.soul:SetHostile(false) end)
+            pcall(function() entity.soul:SetCrimeIgnored(true) end)
+            pcall(function() entity.soul:SetFaction("dummyFaction") end)
+        end
+        if AI and AI.ChangeFaction then
+            pcall(function() AI.ChangeFaction(entity.id, "dummyFaction") end)
+        end
+        if entity.soul then
+            pcall(function() entity.soul:SetTarget(nil) end)
+            pcall(function() entity.soul:SetHostile(false) end)
+            pcall(function() entity.soul:SetCrimeIgnored(true) end)
+            pcall(function() entity.soul:SetFaction("dummyFaction") end)
+        end
+        
+        if AI and AI.SetBehaviorVariable then
+            pcall(function() AI.SetBehaviorVariable(entity.id, "isHostile", false) end)
+        end
+        
+        -- Force sheath weapon and clear targets
+        if entity.human and entity.human.DrawWeapon then
+            pcall(function() entity.human:DrawWeapon(false) end)
+        end
         -- Auto-heal NPC in Waiting mode if option is enabled
         if self.autoHealWaiting then
             self:Heal(entity)
@@ -204,6 +198,7 @@ function DummySpawner:SetHostileState(hostile)
             Game.SendInfoText("ui_dummy_info_waiting", false, 0, 3)
         end
     end
+
 end
 
 function DummySpawner:ToggleHostile()
@@ -223,10 +218,16 @@ function DummySpawner:FreezeEntity(entity)
         pcall(function() entity.soul:SetScriptContext("crime_interruptFlee",      false) end)
         pcall(function() entity.soul:SetScriptContext("crime_fleeAfterSurrender", false) end)
         pcall(function() entity.soul:SetCrimeIgnored(true) end)
+        pcall(function() entity.soul:SetLootable(false) end)
+        pcall(function() entity.soul:SetCanBeLooted(false) end)
         pcall(function() entity.soul:SetFaction("dummyFaction") end)
     end
 
-    -- Invulnerability flags (prevents death / HP change event triggering panic)
+    -- Unlootable & non-searchable flags
+    if entity.actor then
+        pcall(function() entity.actor:SetLootable(false) end)
+    end
+
     local makeImmortal = (DummySpawner.isImmortal ~= false)
     if entity.SetInvulnerability then
         pcall(function() entity:SetInvulnerability(makeImmortal) end)
@@ -237,23 +238,13 @@ function DummySpawner:FreezeEntity(entity)
     entity.invulnerable = makeImmortal
     if entity.Properties then
         entity.Properties.bInvulnerable = makeImmortal
+        entity.Properties.bLootable = false
+        entity.Properties.bCanBeLooted = false
+        entity.Properties.bDisableLoot = true
+        entity.Properties.bSearchable = false
         if entity.Properties.Health then
             entity.Properties.Health.bInvulnerable = makeImmortal
         end
-    end
-
-    -- Prevent Lua hit/damage callbacks from interrupting AI and auto-heal in Waiting mode
-    entity.OnHit = function(hit)
-        if not DummySpawner.isHostile and DummySpawner.autoHealWaiting then
-            DummySpawner:Heal(entity)
-        end
-        return false
-    end
-    entity.OnDamage = function(dmg)
-        if not DummySpawner.isHostile and DummySpawner.autoHealWaiting then
-            DummySpawner:Heal(entity)
-        end
-        return false
     end
 end
 
@@ -283,11 +274,12 @@ end
 
 function DummySpawner:ApplyFaction(entity)
     if not entity then return end
+    local faction = self.isHostile and "bandit" or "dummyFaction"
     if AI and AI.ChangeFaction then
-        pcall(function() AI.ChangeFaction(entity.id, "dummyFaction") end)
+        pcall(function() AI.ChangeFaction(entity.id, faction) end)
     end
     if entity.soul then
-        pcall(function() entity.soul:SetFaction("dummyFaction") end)
+        pcall(function() entity.soul:SetFaction(faction) end)
         pcall(function() entity.soul:SetCrimeIgnored(true) end)
     end
 end
@@ -297,14 +289,17 @@ end
 ------------------------------------------------------------
 
 function DummySpawner:Spawn()
-    if self:FindSavedDummy() then
-        self:Log("Dummy already exists – despawning first.")
+    if self.spawnedEntityId and System and System.GetEntity and System.GetEntity(self.spawnedEntityId) then
+        self:Log("Dummy already active – despawning first.")
         self:Despawn()
     end
 
     local pl = self:GetPlayer()
     if not pl then
         self:Log("ERROR: Could not find player entity.")
+        if Game and Game.SendInfoText then
+            Game.SendInfoText("Dummy Spawn Error: Player not found", false, 0, 3)
+        end
         return
     end
 
@@ -313,26 +308,29 @@ function DummySpawner:Spawn()
 
     self.isHostile = false
 
-    -- Spawn with custom dummy_brain (guidBrainId = a1b2c3d4-0001-4000-8000-100000000001)
-    -- and custom Dumb Dumb soul (guidSharedSoulId = a1b2c3d4-0003-4000-8000-100000000003)
-    System.SpawnEntity({
-        class       = self.ENTITY_CLASS,
-        name        = entityName,
-        position    = spawnPos,
-        orientation = facingDir,
-        properties  = {
-            guidSharedSoulId        = self.SOUL_GUID,
-            guidBrainId             = "a1b2c3d4-0001-4000-8000-100000000001",  -- dummy_brain
-            sWH_AI_EntityCategory   = "dummyFaction",
-            bWH_PerceptorObject     = true,
-            bWH_PerceptibleObject   = true,
-            bInvulnerable           = true,
-        }
-    })
+    local ok = pcall(function()
+        System.SpawnEntity({
+            class       = self.ENTITY_CLASS,
+            name        = entityName,
+            position    = spawnPos,
+            orientation = facingDir,
+            properties  = {
+                guidSharedSoulId        = self.SOUL_GUID,
+                guidBrainId             = "a1b2c3d4-0001-4000-8000-100000000001",
+                sWH_AI_EntityCategory   = "dummyFaction",
+                bWH_PerceptorObject     = true,
+                bWH_PerceptibleObject   = true,
+                bInvulnerable           = true,
+            }
+        })
+    end)
 
-    local entity = System.GetEntityByName(entityName)
+    local entity = System.GetEntityByName and System.GetEntityByName(entityName)
     if not entity then
         self:Log("ERROR: System.SpawnEntity returned nil.")
+        if Game and Game.SendInfoText then
+            Game.SendInfoText("Dummy Spawn Failed!", false, 0, 3)
+        end
         return
     end
 
@@ -351,16 +349,9 @@ function DummySpawner:Spawn()
     self:ApplyFaction(entity)
     self:FreezeEntity(entity)
 
-    -- Deferred re-apply
-    local eid = entity.id
-    if Script and Script.SetTimer then
-        Script.SetTimer(500, function()
-            local ent = System.GetEntity(eid)
-            if ent then
-                DummySpawner:ApplyName(ent)
-                DummySpawner:FreezeEntity(ent)
-            end
-        end)
+    -- Deferred re-apply using named function
+    if Script and Script.SetTimerForFunction then
+        pcall(function() Script.SetTimerForFunction(500, "DummySpawner.DelayedSpawnFinish", entity.id) end)
     end
 
     -- Inject interaction prompt
@@ -369,28 +360,58 @@ function DummySpawner:Spawn()
     end
 
     -- Apply initial armor preset
-    self.currentPresetIdx = 1
     DummyEquipment:ApplyPreset(self.spawnedEntityId, self.currentPresetIdx)
+
+    if Game and Game.SendInfoText then
+        Game.SendInfoText("ui_dummy_spawned", false, 0, 3)
+    end
 end
 
 function DummySpawner:Despawn()
-    if not self:FindSavedDummy() then
-        self:Log("No dummy to despawn.")
+    local entity = (self.spawnedEntityId and System and System.GetEntity) and System.GetEntity(self.spawnedEntityId) or nil
+
+    if not entity then
+        self:Log("No active dummy to despawn.")
+        self.spawnedEntityId = nil
         return
     end
-    System.RemoveEntity(self.spawnedEntityId)
+
+    pcall(function()
+        System.RemoveEntity(self.spawnedEntityId)
+    end)
+
     self:Log("Despawned Dumb Dumb.")
     self.spawnedEntityId  = nil
     self.currentPresetIdx = 1
     self.isHostile        = false
     self.isImmortal       = true
+
+    if Game and Game.SendInfoText then
+        Game.SendInfoText("ui_dummy_despawned", false, 0, 3)
+    end
 end
 
 function DummySpawner:Toggle()
-    if self:FindSavedDummy() then
+    local isSpawned = (self.spawnedEntityId and System and System.GetEntity and System.GetEntity(self.spawnedEntityId))
+    if isSpawned then
         self:Despawn()
     else
         self:Spawn()
+    end
+end
+
+------------------------------------------------------------
+--  DELAYED SPAWN FINISH
+------------------------------------------------------------
+
+function DummySpawner.DelayedSpawnFinish(entID)
+    local entity = (entID and System and System.GetEntity) and System.GetEntity(entID) or nil
+    if entity then
+        DummySpawner:ApplyName(entity)
+        DummySpawner:FreezeEntity(entity)
+        if DummyInteraction and DummyInteraction.Inject then
+            DummyInteraction:Inject(entity)
+        end
     end
 end
 
@@ -399,7 +420,7 @@ end
 ------------------------------------------------------------
 
 function DummySpawner:NextPreset()
-    if not self:FindSavedDummy() then
+    if not self.spawnedEntityId then
         self:Log("Spawn a dummy first.")
         return
     end
@@ -408,7 +429,7 @@ function DummySpawner:NextPreset()
 end
 
 function DummySpawner:PrevPreset()
-    if not self:FindSavedDummy() then
+    if not self.spawnedEntityId then
         self:Log("Spawn a dummy first.")
         return
     end
@@ -418,5 +439,30 @@ function DummySpawner:PrevPreset()
     end
     DummyEquipment:ApplyPreset(self.spawnedEntityId, self.currentPresetIdx)
 end
-i f   G a m e . R e g i s t e r L i s t e n e r   t h e n   G a m e . R e g i s t e r L i s t e n e r ( D u m m y S p a w n e r )   e n d  
- 
+
+function DummySpawner:DebugAI()
+    local entity = (self.spawnedEntityId and System and System.GetEntity) and System.GetEntity(self.spawnedEntityId) or nil
+    if not entity then
+        self:Log("DebugAI: No active dummy entity found.")
+        return
+    end
+
+    self:Log("=== DUMMY AI DEBUG V3 ===")
+    self:Log("Entity ID: " .. tostring(entity.id))
+    self:Log("Name: " .. tostring(entity:GetName()))
+    self:Log("DummySpawner.isHostile: " .. tostring(self.isHostile))
+    
+    if not entity.soul then
+        self:Log("No soul component found.")
+    else
+        self:Log("Soul component exists.")
+    end
+
+    if not entity.actor then
+        self:Log("No actor component found.")
+    else
+        self:Log("Actor component exists.")
+    end
+    
+    self:Log("========================")
+end

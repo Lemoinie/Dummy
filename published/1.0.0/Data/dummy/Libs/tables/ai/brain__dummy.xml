@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="barbora" xsi:noNamespaceSchemaLocation="../database.xsd">
+	<brains version="1">
+		<!-- Dummy training target: stands still, no flee, no follow, no combat. -->
+		<brain brain_id="a1b2c3d4-0001-4000-8000-100000000001" brain_name="dummy_brain" />
+	</brains>
+</database>

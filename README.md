@@ -72,6 +72,7 @@ Open the console in-game (`~`):
 | `dummy_next` | Cycle to next armor preset (also triggered by pressing `E` on target) |
 | `dummy_prev` | Cycle to previous armor preset |
 | `dummy_preset <1|2|3>` | Instantly set specific armor preset (1=Light, 2=Medium, 3=Heavy Full Plate) |
+| `dummy_mode` *(or `dummy_hostile`)* | Toggle or set Dumb Dumb operational mode (Wait / Neutral vs Hostile / Combat) |
 | `dummy_heal` | Heal Dumb Dumb to 100% full health |
 | `dummy_immortal` | Toggle Dumb Dumb invulnerability on / off |
 | `dummy_autoheal` | Toggle auto-healing in waiting mode (`dummy_autoheal 1` or `dummy_autoheal 0`) |

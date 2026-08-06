@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="barbora" xsi:noNamespaceSchemaLocation="soul.xsd">
+	<souls version="1">
+		<!-- Custom Dumb Dumb soul: dummyFaction, non-civilian social class (0) so hitting it causes zero reputation loss -->
+		<soul brain_id="a1b2c3d4-0001-4000-8000-100000000001" combat_level="1.0" digestion_multiplier="0" factionName="dummyFaction" initial_clothing_dirt="0" skald_character_name="char_dumb_dumb" social_class_id="0" soul_archetype_id="0" soul_id="a1b2c3d4-0003-4000-8000-100000000003" soul_name="soul_dumb_dumb" soul_vip_class_id="0" xp_multiplier="0" />
+	</souls>
+</database>

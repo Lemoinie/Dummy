@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <database name="barbora" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../database.xsd">
 	<SmartEntitys version="1">
-		<SmartEntityTemplate BrainId="a1b2c3d4-0001-4000-8000-100000000001" DatabaseId="43c857b4-032b-844f-3d1b-3cc90d5a2382" Name="so_interrupt" UpdatePriority="false">
+		<SmartEntityTemplate BrainId="ea3ff907-6743-4ad4-8723-2c14ac2a01f0" DatabaseId="43c857b4-032b-844f-3d1b-3cc90d5a2382" Name="so_interrupt" UpdatePriority="false">
 			<BehaviorTemplates>
 				<!-- Melee combat behavior template for dummy hostile mode -->
 				<SmartBehaviorTemplate InitialState="Enabled" MaxInstances="-1" Name="combat_melee" PreventsMonsterLod="true">
-					<TreeLocation FileName="combat_melee.xml" TreeName="combat_melee" />
+					<TreeLocation FileName="dummy_combat_melee.xml" TreeName="combat_melee" />
 					<Inboxes>
 						<InboxTemplate InboxId="80cbc23c-5752-43e3-9405-38355ad8d617" Priority="0" />
 						<InboxTemplate InboxId="5201b5fc-b24b-49ab-b409-23c13ae08e4e" Priority="0" />

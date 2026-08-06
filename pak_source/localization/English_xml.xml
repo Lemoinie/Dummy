@@ -15,4 +15,6 @@
   <Row><Cell>ui_dummy_immortal_off</Cell><Cell>Immortal Invulnerability: DISABLED</Cell><Cell>Immortal Invulnerability: DISABLED</Cell></Row>
   <Row><Cell>ui_dummy_autoheal_on</Cell><Cell>Auto-Heal in Waiting: ENABLED</Cell><Cell>Auto-Heal in Waiting: ENABLED</Cell></Row>
   <Row><Cell>ui_dummy_autoheal_off</Cell><Cell>Auto-Heal in Waiting: DISABLED</Cell><Cell>Auto-Heal in Waiting: DISABLED</Cell></Row>
+  <Row><Cell>ui_dummy_spawned</Cell><Cell>Dumb Dumb Spawned!</Cell><Cell>Dumb Dumb Spawned!</Cell></Row>
+  <Row><Cell>ui_dummy_despawned</Cell><Cell>Dumb Dumb Despawned</Cell><Cell>Dumb Dumb Despawned</Cell></Row>
 </Table>

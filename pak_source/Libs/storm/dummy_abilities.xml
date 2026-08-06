@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<storm>
+	<rules>
+		<rule name="dummy_stats">
+			<selectors>
+				<hasName name="soul_dumb_dumb"/>
+			</selectors>
+			<operations>
+				<setAttribute stat="strength" value="15" />
+				<setAttribute stat="agility" value="15" />
+				<setAttribute stat="vitality" value="15" />
+				<setSkill skill="weapon_sword" value="15" />
+				<setSkill skill="defense" value="15" />
+				<setSkill skill="warfare" value="15" />
+			</operations>
+		</rule>	
+	</rules>
+</storm>

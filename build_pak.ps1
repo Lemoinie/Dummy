@@ -33,6 +33,21 @@ function Add-FileToZip($zip, $entryPath, $filePath) {
     $writer.Close()
 }
 
+# ── 0. RUN UNIT TESTS ──────────────────────────────────
+Write-Log "[0/3] Running Lua Unit Tests ..." "Cyan"
+if (Get-Command "lua" -ErrorAction SilentlyContinue) {
+    $testOutput = & lua tests/test_dummy.lua 2>&1
+    foreach ($line in $testOutput) { Write-Log "  $line" }
+    
+    if ($LASTEXITCODE -ne 0) {
+        Write-Log "ERROR: Unit tests failed (Exit Code: $LASTEXITCODE)! Aborting build." "Red"
+        exit 1
+    }
+    Write-Log "  -> Tests passed successfully." "Green"
+} else {
+    Write-Log "WARNING: Lua interpreter not found. Skipping unit tests." "Yellow"
+}
+
 Write-Log "[1/3] Building Data PAK (dummy.pak) ..." "Cyan"
 $dataPak = Join-Path $outDir "dummy.pak"
 if (Test-Path $dataPak) { Remove-Item $dataPak -Force }
@@ -98,6 +113,15 @@ if (Test-Path $skaldTableDir) {
     foreach ($f in Get-ChildItem $skaldTableDir -Filter "*.xml") {
         Add-FileToZip $zip "libs/tables/skald/$($f.Name)" $f.FullName
         Write-Log "  + Added libs/tables/skald/$($f.Name)"
+    }
+}
+
+# --- STORM files ---
+$stormDir = Join-Path $pakSource "libs\storm"
+if (Test-Path $stormDir) {
+    foreach ($f in Get-ChildItem $stormDir -Filter "*.xml") {
+        Add-FileToZip $zip "libs/storm/$($f.Name)" $f.FullName
+        Write-Log "  + Added libs/storm/$($f.Name)"
     }
 }
 

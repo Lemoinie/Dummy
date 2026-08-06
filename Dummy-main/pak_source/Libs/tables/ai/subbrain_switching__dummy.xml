@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="barbora" xsi:noNamespaceSchemaLocation="../database.xsd">
+	<subbrain_switchings version="1">
+		<!-- Wires dummy_scheduler.xml to the dummy subbrain. -->
+		<subbrain_switching file_name="dummy_scheduler.xml" subbrain_id="a1b2c3d4-0002-4000-8000-100000000002" tree_name="onUpdate" />
+	</subbrain_switchings>
+</database>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<database name="barbora" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../database.xsd">
+	<SmartEntitys version="1">
+		<SmartEntityTemplate BrainId="a1b2c3d4-0001-4000-8000-100000000001" DatabaseId="43c857b4-032b-844f-3d1b-3cc90d5a2382" Name="so_interrupt" UpdatePriority="false">
+			<BehaviorTemplates>
+				<!-- Melee combat behavior template for dummy hostile mode -->
+				<SmartBehaviorTemplate InitialState="Enabled" MaxInstances="-1" Name="combat_melee" PreventsMonsterLod="true">
+					<TreeLocation FileName="combat_melee.xml" TreeName="combat_melee" />
+					<Inboxes>
+						<InboxTemplate InboxId="80cbc23c-5752-43e3-9405-38355ad8d617" Priority="0" />
+						<InboxTemplate InboxId="5201b5fc-b24b-49ab-b409-23c13ae08e4e" Priority="0" />
+						<InboxTemplate InboxId="5450a641-8c06-4839-a5d8-dd750a977c19" Priority="0" />
+						<InboxTemplate InboxId="b4c700f0-eb28-4605-a0dd-a7188900f83a" Priority="0" />
+						<InboxTemplate InboxId="c1221861-49ff-4dbc-bc94-de1bd2601a1a" Priority="0" />
+						<InboxTemplate InboxId="42b04ead-5936-2286-c9c3-85769ff854b2" Priority="0" />
+					</Inboxes>
+				</SmartBehaviorTemplate>
+			</BehaviorTemplates>
+		</SmartEntityTemplate>
+	</SmartEntitys>
+</database>
